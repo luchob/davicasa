@@ -91,25 +91,25 @@ public class FileRenameUtils
 		{
 			copyFile(aFile, targetFile);
 		}
-		
+
 		logger.info("Copied {} to {}. Dry run enabled - {}.",
-				aFile.getAbsolutePath(), targetFile.getAbsolutePath(),
-				dryRun);
+				aFile.getAbsolutePath(), targetFile.getAbsolutePath(), dryRun);
 
 		return targetFile;
 	}
-	
+
 	private void copyFile(File src, File target) throws IOException
 	{
 		byte[] buffer = new byte[8192];
-		try (FileInputStream fis = new FileInputStream(src); FileOutputStream fos = new FileOutputStream(target) )
+		try (FileInputStream fis = new FileInputStream(src);
+				FileOutputStream fos = new FileOutputStream(target))
 		{
 			int read = 0;
 			while ((read = fis.read(buffer)) != -1)
 			{
 				fos.write(buffer, 0, read);
 			}
-			
+
 			fos.flush();
 		}
 	}
@@ -126,6 +126,11 @@ public class FileRenameUtils
 			if (!ret)
 			{
 				logger.error("Unable to create directory {}",
+						imageDir.getAbsolutePath());
+			}
+			else
+			{
+				logger.info("Successfully created directory {}.",
 						imageDir.getAbsolutePath());
 			}
 		}
@@ -186,14 +191,14 @@ public class FileRenameUtils
 		indexCache.put(imageDir, freeIdx + 1);
 		return freeIdx;
 	}
-	
+
 	public void init(File targetDir, boolean dryRun)
 	{
 		Objects.requireNonNull(targetDir, "Target dir cannot be null!");
-		
+
 		this.targetDir = targetDir;
 		this.setDryRun(dryRun);
-		
+
 		indexCache.clear();
 	}
 }
