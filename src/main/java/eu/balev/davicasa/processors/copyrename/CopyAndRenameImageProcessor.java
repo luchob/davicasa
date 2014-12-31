@@ -22,6 +22,8 @@ public class CopyAndRenameImageProcessor extends ImageProcessorBase
 {
 	private final Logger logger = LoggerFactory
 			.getLogger(CopyAndRenameImageProcessor.class);
+	
+	private final File targetDir;
 
 	@Inject
 	@Named("ImageFileFilter")
@@ -29,10 +31,9 @@ public class CopyAndRenameImageProcessor extends ImageProcessorBase
 	
 	@Inject ImageFinder imageFinder;
 	
-	private final File targetDir;
+	@Inject ImageCreateDateExtractor dateExtractor;
 	
-	private ImageCreateDateExtractor dateExtractor;
-	private FileRenameUtils fileRenameUtils;
+	@Inject FileRenameUtils fileRenameUtils;
 	
 	
 	public CopyAndRenameImageProcessor(File sourceDir, File targetDir)
@@ -43,21 +44,20 @@ public class CopyAndRenameImageProcessor extends ImageProcessorBase
 		setSourceDir(sourceDir);
 
 		this.targetDir = targetDir;
-
-		fileRenameUtils = new FileRenameUtils(targetDir);
-		fileRenameUtils.setDryRun(isDryRun());
-		
-		dateExtractor = new ImageCreateDateExtractor();
 	}
 
 	@Override
 	public void process() throws IOException
 	{
 		logger.info(
-				"Processing images from source folder {}. The processor will copy or move the images to {} and then rename them following a certain pattern. Dry run - {}",
+				"Processing images from source folder {}. " +
+				"The processor will copy or move the images to {} and then rename them following a " +
+				"certain pattern. Dry run enabled - {}.",
 				getSourceDir().getAbsolutePath(), targetDir.getAbsoluteFile(),
 				isDryRun());
 
+		fileRenameUtils.init(targetDir, isDryRun());
+		
 		long start = System.currentTimeMillis();
 
 		List<File> images = imageFinder.listImages(getSourceDir());
@@ -95,11 +95,6 @@ public class CopyAndRenameImageProcessor extends ImageProcessorBase
 		logger.info(
 				"Finishing the processing. {} image(s) were processed in {} millis.",
 				images.size(), System.currentTimeMillis() - start);
-	}
-
-	public void setDateExtractor(ImageCreateDateExtractor dateExtractor)
-	{
-		this.dateExtractor = dateExtractor;
 	}
 	
 	public void setFileRenameUtils(FileRenameUtils fileRenameUtils)

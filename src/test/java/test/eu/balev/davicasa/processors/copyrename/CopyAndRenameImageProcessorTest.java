@@ -55,7 +55,6 @@ public class CopyAndRenameImageProcessorTest
 				aDate);
 		fileRenameUtilsMock = Mockito.mock(FileRenameUtils.class);
 
-		processorToTest.setDateExtractor(dateExtractorMock);
 		processorToTest.setFileRenameUtils(fileRenameUtilsMock);
 		processorToTest.setDryRun(true);
 
@@ -94,6 +93,7 @@ public class CopyAndRenameImageProcessorTest
 							ImageFileFilter.class);
 			
 			bind(ImageFinder.class).toInstance(new TestImageFinder());
+			bind(ImageCreateDateExtractor.class).toInstance(dateExtractorMock);
 		}
 	}
 

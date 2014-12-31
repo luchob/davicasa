@@ -19,9 +19,9 @@ public class FileRenameUtilsTest
 	@Before
 	public void setUp()
 	{
-		fileRenameUtilsToTest = new FileRenameUtils(new File("."));
+		fileRenameUtilsToTest = new FileRenameUtils();
 		
-		fileRenameUtilsToTest.setDryRun(true);
+		fileRenameUtilsToTest.init(new File("."), true);
 	}
 
 	@Test

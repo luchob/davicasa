@@ -22,7 +22,7 @@ public class FileRenameUtils
 	private static Logger logger = LoggerFactory
 			.getLogger(FileRenameUtils.class);
 
-	private final File targetDir;
+	private File targetDir;
 
 	private boolean dryRun;
 
@@ -36,14 +36,6 @@ public class FileRenameUtils
 			"yyyyMMdd");
 
 	private Map<File, Integer> indexCache = new HashMap<>();
-
-	public FileRenameUtils(File targetDir)
-	{
-		Objects.requireNonNull(targetDir,
-				"The target directory cannot be null!");
-
-		this.targetDir = targetDir;
-	}
 
 	/**
 	 * Returns the image directory where the image should be saved.
@@ -193,5 +185,15 @@ public class FileRenameUtils
 
 		indexCache.put(imageDir, freeIdx + 1);
 		return freeIdx;
+	}
+	
+	public void init(File targetDir, boolean dryRun)
+	{
+		Objects.requireNonNull(targetDir, "Target dir cannot be null!");
+		
+		this.targetDir = targetDir;
+		this.setDryRun(dryRun);
+		
+		indexCache.clear();
 	}
 }
