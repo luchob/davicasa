@@ -1,6 +1,7 @@
 package test.eu.balev.davicasa;
 
 import java.io.FileFilter;
+import java.util.Comparator;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.ParseException;
@@ -19,6 +20,7 @@ import eu.balev.davicasa.ImageProcessorFactoryImpl;
 import eu.balev.davicasa.processors.ImageProcessor;
 import eu.balev.davicasa.processors.copyrename.CopyAndRenameImageProcessor;
 import eu.balev.davicasa.processors.removeduplicates.RemoveDuplicatedImagesProcessor;
+import eu.balev.davicasa.util.FileIdentityComparator;
 
 public class ImageProcessorFactoryImplTest
 {
@@ -98,6 +100,9 @@ public class ImageProcessorFactoryImplTest
 			bind(FileFilter.class)
 					.annotatedWith(Names.named("ImageFileFilter")).to(
 							ImageFileFilter.class);
+			bind(Comparator.class).annotatedWith(
+					Names.named("FileIdentityComparator")).to(
+					FileIdentityComparator.class);
 		}
 
 	}

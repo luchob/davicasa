@@ -7,6 +7,7 @@ import java.util.Date;
 
 import org.junit.Assert;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -22,6 +23,12 @@ public class FileRenameUtilsTest
 		fileRenameUtilsToTest = new FileRenameUtils();
 		
 		fileRenameUtilsToTest.init(new File("."), true);
+	}
+	
+	@After
+	public void tearDown()
+	{
+		fileRenameUtilsToTest = null;
 	}
 
 	@Test
@@ -118,8 +125,19 @@ public class FileRenameUtilsTest
 		{
 			int idx = fileRenameUtilsToTest.getAndUpdateFreeIndex(now, "jpg");
 			Assert.assertEquals(expected, idx);
-		}
+		}	
+	}
+	
+	@Test
+	public void testProcessImageFile() throws IOException
+	{
+		Calendar cal = Calendar.getInstance();
+		cal.set(2010, Calendar.AUGUST, 15, 0, 0, 0);
 		
+		File dummyFile = new File("dummy.jpg");
 		
+		File renamed = fileRenameUtilsToTest.processImageFile(dummyFile, cal.getTime());
+		
+		Assert.assertEquals("20100815_00001.jpg", renamed.getName());
 	}
 }

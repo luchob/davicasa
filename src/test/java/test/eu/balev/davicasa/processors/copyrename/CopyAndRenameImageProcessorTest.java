@@ -3,6 +3,7 @@ package test.eu.balev.davicasa.processors.copyrename;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -18,13 +19,17 @@ import com.drew.imaging.ImageProcessingException;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.TypeLiteral;
 import com.google.inject.name.Names;
 
 import eu.balev.davicasa.ImageFileFilter;
 import eu.balev.davicasa.ImageFinder;
+import eu.balev.davicasa.MD5Calculator;
+import eu.balev.davicasa.MD5CalculatorImpl;
 import eu.balev.davicasa.processors.copyrename.CopyAndRenameImageProcessor;
 import eu.balev.davicasa.processors.copyrename.FileRenameUtils;
 import eu.balev.davicasa.processors.copyrename.ImageCreateDateExtractor;
+import eu.balev.davicasa.util.FileIdentityComparator;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CopyAndRenameImageProcessorTest
@@ -53,13 +58,9 @@ public class CopyAndRenameImageProcessorTest
 
 		Mockito.when(dateExtractorMock.getImageDate(mockFile1)).thenReturn(
 				aDate);
-		fileRenameUtilsMock = Mockito.mock(FileRenameUtils.class);
 
-		processorToTest.setFileRenameUtils(fileRenameUtilsMock);
+
 		processorToTest.setDryRun(true);
-
-		Mockito.when(dateExtractorMock.getImageDate(mockFile1)).thenReturn(
-				aDate);
 	}
 
 	@Test
@@ -88,12 +89,20 @@ public class CopyAndRenameImageProcessorTest
 		@Override
 		protected void configure()
 		{
+			bind(new TypeLiteral<Comparator<File>>()
+			{
+			}).annotatedWith(Names.named("FileIdentityComparator")).to(
+					FileIdentityComparator.class);
+
+			bind(FileRenameUtils.class).toInstance(fileRenameUtilsMock);
+
 			bind(FileFilter.class)
 					.annotatedWith(Names.named("ImageFileFilter")).to(
 							ImageFileFilter.class);
-			
+
 			bind(ImageFinder.class).toInstance(new TestImageFinder());
 			bind(ImageCreateDateExtractor.class).toInstance(dateExtractorMock);
+			bind(MD5Calculator.class).to(MD5CalculatorImpl.class);
 		}
 	}
 

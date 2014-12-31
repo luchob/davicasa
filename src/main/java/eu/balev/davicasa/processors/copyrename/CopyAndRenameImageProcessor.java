@@ -35,7 +35,6 @@ public class CopyAndRenameImageProcessor extends ImageProcessorBase
 	
 	@Inject FileRenameUtils fileRenameUtils;
 	
-	
 	public CopyAndRenameImageProcessor(File sourceDir, File targetDir)
 	{
 		Objects.requireNonNull(sourceDir, "The source dir cannot be null!");
@@ -96,10 +95,4 @@ public class CopyAndRenameImageProcessor extends ImageProcessorBase
 				"Finishing the processing. {} image(s) were processed in {} millis.",
 				images.size(), System.currentTimeMillis() - start);
 	}
-	
-	public void setFileRenameUtils(FileRenameUtils fileRenameUtils)
-	{
-		this.fileRenameUtils = fileRenameUtils;
-	}
-
 }

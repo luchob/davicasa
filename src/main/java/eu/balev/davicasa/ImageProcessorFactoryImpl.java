@@ -6,9 +6,6 @@ import org.apache.commons.cli.CommandLine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-
 import eu.balev.davicasa.processors.ImageProcessor;
 import eu.balev.davicasa.processors.ImageProcessorBase;
 import eu.balev.davicasa.processors.copyrename.CopyAndRenameImageProcessor;
@@ -61,9 +58,6 @@ public class ImageProcessorFactoryImpl implements ImageProcessorFactory
 		if (ret != null)
 		{
 			ret.setDryRun(dryRun);
-			
-			Injector injector = Guice.createInjector(new DavicasaModule());
-			injector.injectMembers(ret);
 		}
 		
 		return ret;

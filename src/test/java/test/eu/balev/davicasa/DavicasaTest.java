@@ -2,7 +2,6 @@ package test.eu.balev.davicasa;
 
 import java.io.IOException;
 import org.apache.commons.cli.CommandLine;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -11,7 +10,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
-import com.google.inject.Injector;
 
 import eu.balev.davicasa.Davicasa;
 import eu.balev.davicasa.ImageProcessorFactory;
@@ -25,17 +23,10 @@ public class DavicasaTest {
 	@Mock ImageProcessorFactory mockImageProcessorFactory;
 	@Mock CommandLine mockCommandLine;
 	
-	@Before
-	public void setUp()
-	{
-		Injector injector = Guice.createInjector(new DavicasaTestModule());
-		injector.injectMembers(davicasaToTest);
-	}
-	
 	@Test
 	public void testNoProcessorNoException()
 	{
-		davicasaToTest.process(mockCommandLine);
+		davicasaToTest.process(mockCommandLine, Guice.createInjector(new DavicasaTestModule()));
 	}
 	
 	@Test
@@ -45,7 +36,7 @@ public class DavicasaTest {
 		
 		Mockito.when(mockImageProcessorFactory.tryCreateProcessor(mockCommandLine)).thenReturn(mockProcessor);
 		
-		davicasaToTest.process(mockCommandLine);
+		davicasaToTest.process(mockCommandLine, Guice.createInjector(new DavicasaTestModule()));
 		
 		Mockito.verify(mockProcessor, Mockito.times(1)).process();
 		

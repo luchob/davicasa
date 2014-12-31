@@ -1,24 +1,37 @@
 package eu.balev.davicasa.processors.copyrename;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import eu.balev.davicasa.MD5Calculator;
+
 public class FileRenameUtils
 {
 	/*
-	 * YYYY/MM/DD
+	 * Currently the target directory structure is:
+	 * 
+	 * YYYY |----MM |----DD
 	 */
+
 	private static Logger logger = LoggerFactory
 			.getLogger(FileRenameUtils.class);
 
@@ -35,7 +48,24 @@ public class FileRenameUtils
 	private static final DateFormat IMAGE_NAME_FORMAT = new SimpleDateFormat(
 			"yyyyMMdd");
 
+	@Inject
+	MD5Calculator md5Calculator;
+
+	@Inject
+	@Named("ImageFileFilter")
+	FileFilter imageFilter;
+	
+	@Inject
+	@Named("FileIdentityComparator")
+	Comparator<File> fileComparator;
+
+	/**
+	 * Maintains a cache for free indices. The key in the map is the directory
+	 * where the image should go and the value is the next free index.
+	 */
 	private Map<File, Integer> indexCache = new HashMap<>();
+
+	private Map<File, Map<String, List<File>>> targetFilesCache = new HashMap<>();
 
 	/**
 	 * Returns the image directory where the image should be saved.
@@ -43,7 +73,7 @@ public class FileRenameUtils
 	 * @param imageDate
 	 *            the date when the image was shot
 	 * 
-	 * @return the relative path where the image must be saved
+	 * @return the path where the image must be saved
 	 * 
 	 * @throws java.lang.NullPointerException
 	 *             if image date is null
@@ -74,9 +104,9 @@ public class FileRenameUtils
 
 	public File processImageFile(File aFile, Date imageDate) throws IOException
 	{
-		File imageDir = getImageDir(imageDate);
+		File targetDir = getImageDir(imageDate);
 
-		if (!checkImageDir(imageDir))
+		if (!checkImageDir(targetDir))
 		{
 			return null;
 		}
@@ -84,8 +114,8 @@ public class FileRenameUtils
 		String ext = getFileExtension(aFile);
 		Integer index = getAndUpdateFreeIndex(imageDate, ext);
 
-		File targetFile = new File(imageDir, getImageFileName(imageDate, index,
-				ext));
+		File targetFile = new File(targetDir, getImageFileName(imageDate,
+				index, ext));
 
 		if (!dryRun)
 		{
@@ -96,6 +126,79 @@ public class FileRenameUtils
 				aFile.getAbsolutePath(), targetFile.getAbsolutePath(), dryRun);
 
 		return targetFile;
+	}
+
+	//TODO: use the identity check!!!
+	public File checkAndUpdateIdentity(File targetDir, File targetFile)
+			throws IOException
+	{
+		Map<String, List<File>> cache = targetFilesCache.get(targetDir);
+		if (cache == null)
+		{
+			// no cache for this directory.
+			// initialize the cache.
+			cache = createFileCache(targetFile);
+			targetFilesCache.put(targetDir, cache);
+		}
+
+		String md5 = md5Calculator.getMD5Sum(targetFile);
+
+		if (cache.containsKey(md5))
+		{
+			// the cache has such md5 sum, meaning that the
+			// target dir most likely contains a duplicate
+			List<File> existingFiles = cache.get(md5);
+			if (existingFiles.isEmpty())
+			{
+				existingFiles.add(targetFile);
+			}
+			else
+			{
+
+				Iterator<File> existingFilesIter = existingFiles.iterator();
+				while (existingFilesIter.hasNext())
+				{
+					File existingFile = existingFilesIter.next();
+
+					if (fileComparator.compare(targetFile, existingFile) == 0)
+					{
+						return existingFile;
+					}
+				}
+				
+				existingFiles.add(targetFile);
+			}
+		}
+		else
+		{
+			List<File> filesForMD5 = new LinkedList<>();
+			filesForMD5.add(targetFile);
+			cache.put(md5, filesForMD5);
+		}
+
+		return null;
+	}
+
+	private Map<String, List<File>> createFileCache(File targetDir)
+			throws IOException
+	{
+		// initialize the cache with all files available
+		Map<String, List<File>> cache = new HashMap<>();
+		File[] existingFiles = targetDir.listFiles(imageFilter);
+		for (File existingFile : existingFiles)
+		{
+			String md5 = md5Calculator.getMD5Sum(targetDir);
+
+			List<File> files = cache.get(md5);
+			if (files == null)
+			{
+				files = new LinkedList<>();
+				cache.put(md5, files);
+			}
+			files.add(existingFile);
+		}
+
+		return cache;
 	}
 
 	private void copyFile(File src, File target) throws IOException
@@ -122,26 +225,29 @@ public class FileRenameUtils
 			if (!dryRun)
 			{
 				ret = imageDir.mkdirs();
-			}
-			if (!ret)
-			{
-				logger.error("Unable to create directory {}",
-						imageDir.getAbsolutePath());
-			}
-			else
-			{
-				logger.info("Successfully created directory {}.",
-						imageDir.getAbsolutePath());
+				if (!ret)
+				{
+					logger.error("Unable to create directory {}",
+							imageDir.getAbsolutePath());
+				}
+				else
+				{
+					logger.info("Successfully created directory {}.",
+							imageDir.getAbsolutePath());
+				}
 			}
 		}
 		else
 		{
-			if (!imageDir.isDirectory())
+			if (!dryRun)
 			{
-				ret = false;
-				logger.error(
-						"{} exists and is not directory. Unable to continue...",
-						imageDir.getAbsolutePath());
+				if (!imageDir.isDirectory())
+				{
+					ret = false;
+					logger.error(
+							"{} exists and is not directory. Unable to continue...",
+							imageDir.getAbsolutePath());
+				}
 			}
 		}
 
@@ -184,11 +290,11 @@ public class FileRenameUtils
 					break;
 				}
 				freeIdx++;
-
 			}
 		}
 
 		indexCache.put(imageDir, freeIdx + 1);
+
 		return freeIdx;
 	}
 
@@ -200,5 +306,6 @@ public class FileRenameUtils
 		this.setDryRun(dryRun);
 
 		indexCache.clear();
+		targetFilesCache.clear();
 	}
 }

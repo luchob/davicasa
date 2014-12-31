@@ -20,9 +20,9 @@ import eu.balev.davicasa.processors.ImageProcessor;
 
 public class Davicasa
 {
-	@Inject ImageProcessorFactory factory;
-
 	private static Logger logger = LoggerFactory.getLogger(Davicasa.class);
+	
+	@Inject ImageProcessorFactory factory;
 
 	public static void main(String[] args)
 	{
@@ -47,11 +47,9 @@ public class Davicasa
 		
 		printPassedArgs(line);
 		
-		Injector injector = Guice.createInjector(new DavicasaModule());
-		Davicasa davicasa = new Davicasa();
-		injector.injectMembers(davicasa);
 		
-		davicasa.process(line);
+		Davicasa davicasa = new Davicasa();
+		davicasa.process(line, Guice.createInjector(new DavicasaModule()));
 	}
 	
 	private static void printPassedArgs(CommandLine line)
@@ -74,8 +72,10 @@ public class Davicasa
 		
 	}
 
-	public void process(CommandLine line)
+	public void process(CommandLine line, Injector injector)
 	{
+		injector.injectMembers(this);
+		
 		ImageProcessor processor = factory.tryCreateProcessor(line);
 
 		if (processor == null)
@@ -84,6 +84,7 @@ public class Davicasa
 		}
 		else
 		{
+			injector.injectMembers(processor);
 			logger.info("Found prooper image processor. Starting image processing...");
 			logger.info("Running processor of class {} ", processor.getClass());
 			try
@@ -105,6 +106,8 @@ public class Davicasa
 	{
 		Options res = new Options();
 
+		//all processors have a source dir, 
+		//and might be dry runned
 		Option sourceDir = OptionBuilder
 				.withArgName("sourcedir")
 				.hasArg()
@@ -113,6 +116,14 @@ public class Davicasa
 						"the directory where the photos to be processed are located")
 				.create("sourcedir");
 		
+		Option dryrun = OptionBuilder
+				.withArgName("dryrun")
+				.hasArg(false)
+				.withDescription(
+						"if the tool should make a dry run - this means that no changes will be made")
+				.create("dryrun");
+		
+		//a task for cleaning the duplicates
 		Option cleanDuplicates = OptionBuilder
 				.withArgName("cleansrcduplicates")
 				.hasArg(false)
@@ -120,20 +131,14 @@ public class Davicasa
 						"Removes the duplicate image files in the source folder")
 				.create("cleansrcduplicates");
 
+		//a task for copy and rename of existing images
 		Option copyrename = OptionBuilder
 				.withArgName("copyrename")
 				.hasArg(false)
 				.withDescription(
 						"Copies the files from the source folder into the target and renames the source files according to a time pattern")
 				.create("copyrename");
-
-		Option dryrun = OptionBuilder
-				.withArgName("dryrun")
-				.hasArg(false)
-				.withDescription(
-						"if the tool should make a dry run - this means that no changes will be made")
-				.create("dryrun");
-
+		
 		Option targetDir = OptionBuilder
 				.withArgName("targetdir")
 				.hasArg()

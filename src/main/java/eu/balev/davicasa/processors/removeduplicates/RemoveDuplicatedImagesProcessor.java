@@ -76,7 +76,7 @@ public class RemoveDuplicatedImagesProcessor extends ImageProcessorBase
 		}
 		else
 		{
-			logger.info("There are possible duplicates in the processed files. Checking...");
+			logger.info("Most likely there are duplicates in the processed files. Verifying...");
 
 			for (Map.Entry<String, List<File>> entry : filesWithSameMD5Sums
 					.entrySet())
