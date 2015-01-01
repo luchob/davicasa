@@ -39,7 +39,7 @@ public class Davicasa
 		}
 		catch (ParseException pe)
 		{
-			logger.error(pe.getMessage(), pe);
+			logger.error("Unable to parse the passed parameters. Reason is: {}", pe.getMessage());
 
 			HelpFormatter formatter = new HelpFormatter();
 			formatter.printHelp("Davicasa", options);
@@ -69,7 +69,7 @@ public class Davicasa
 			sb.append(System.lineSeparator());
 		}
 
-		logger.info("The following arguments had been passed to the tool: {}",
+		logger.info("Trying to start the tool with the following parameters: {}",
 				sb.toString());
 		
 	}
@@ -82,7 +82,7 @@ public class Davicasa
 
 		if (processor == null)
 		{
-			logger.error("Sorry. Unable to find suitable image processor. Terminating the processing...");
+			logger.error("Sorry. Unable to continue based on these command line parameters...");
 		}
 		else
 		{

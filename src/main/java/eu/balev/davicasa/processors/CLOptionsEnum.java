@@ -7,7 +7,7 @@ public enum CLOptionsEnum
 {
 	SOURCE_DIR("sourcedir", true, true, "The directory where the images to be processed are located"),
 	DRY_RUN("dryrun", false, false, "Specifies if the tool should make a dry run. This means that no changes will be made."),
-	CLEAN_DUPLICATES("cleansrcduplicates", false, false, "Makes the tool remove the duplicate image files in the source folder"),
+	CLEAN_SRC_DUPLICATES("cleansrcduplicates", false, false, "Makes the tool remove the duplicate image files in the source folder"),
 	COPY_RENAME("copyrename", false, false, "Copies the files from the source folder into the target folder and renames the source files according to a date/time pattern"),
 	TARGET_DIR("targetdir", true, false, "The directory where the result of the processing should be stored");
 	
