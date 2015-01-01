@@ -6,7 +6,9 @@ import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -25,11 +27,14 @@ public class ImageFinderImplTest
 	private ImageFinderImpl imageFinderToTest;
 
 	@Mock
-	File dirMock, subDirMock;
+	File dirMock, subDirMock, emptyDirMock;
 	@Mock
 	File img1Mock, img2Mock;
 	@Mock
-	File nonImgMock;
+	File nonImgMock;	
+
+    @Rule
+    public ExpectedException exception = ExpectedException.none();
 
 	@Before
 	public void setUp()
@@ -37,6 +42,9 @@ public class ImageFinderImplTest
 		Mockito.when(dirMock.isDirectory()).thenReturn(true);
 		Mockito.when(dirMock.exists()).thenReturn(true);
 		Mockito.when(subDirMock.isDirectory()).thenReturn(true);
+		
+		Mockito.when(emptyDirMock.isDirectory()).thenReturn(true);
+		Mockito.when(emptyDirMock.exists()).thenReturn(true);
 		
 		Mockito.when(dirMock.listFiles()).thenReturn(new File[]{subDirMock});
 		Mockito.when(subDirMock.listFiles()).thenReturn(new File[]{img1Mock, img2Mock, nonImgMock});
@@ -59,6 +67,23 @@ public class ImageFinderImplTest
 				allImages.contains(img1Mock));
 		Assert.assertTrue("the second image should be availabale",
 				allImages.contains(img2Mock));
+	}
+	
+	@Test
+	public void testListImagesNPE()
+	{
+		exception.expect(NullPointerException.class);
+		
+		imageFinderToTest.listImages(null);
+	}
+	
+	@Test
+	public void testListImagesEmptyList()
+	{
+		List<File> files =imageFinderToTest.listImages(emptyDirMock);
+	
+		Assert.assertNotNull("The files should not be null", files);
+		Assert.assertTrue("The files should be empty", files.isEmpty());
 	}
 
 	private class DavicasaTestModule extends AbstractModule
