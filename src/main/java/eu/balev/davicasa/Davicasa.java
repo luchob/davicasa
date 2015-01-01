@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
+import eu.balev.davicasa.processors.CLOptionsEnum;
 import eu.balev.davicasa.processors.ImageProcessor;
 import eu.balev.davicasa.processors.ImageProcessorFactory;
 
@@ -107,52 +108,18 @@ public class Davicasa
 	{
 		Options res = new Options();
 
-		//all processors have a source dir, 
-		//and might be dry runned
-		Option sourceDir = OptionBuilder
-				.withArgName("sourcedir")
-				.hasArg()
-				.isRequired()
-				.withDescription(
-						"the directory where the photos to be processed are located")
-				.create("sourcedir");
+		for (CLOptionsEnum entry : CLOptionsEnum.values())
+		{
+			Option anOption = OptionBuilder
+					.withArgName(entry.getName())
+					.hasArg(entry.hasArg())
+					.isRequired(entry.isRequired())
+					.withDescription(entry.getDescription())
+					.create(entry.getName());
+			
+			res.addOption(anOption);
+		}
 		
-		Option dryrun = OptionBuilder
-				.withArgName("dryrun")
-				.hasArg(false)
-				.withDescription(
-						"if the tool should make a dry run - this means that no changes will be made")
-				.create("dryrun");
-		
-		//a task for cleaning the duplicates
-		Option cleanDuplicates = OptionBuilder
-				.withArgName("cleansrcduplicates")
-				.hasArg(false)
-				.withDescription(
-						"Removes the duplicate image files in the source folder")
-				.create("cleansrcduplicates");
-
-		//a task for copy and rename of existing images
-		Option copyrename = OptionBuilder
-				.withArgName("copyrename")
-				.hasArg(false)
-				.withDescription(
-						"Copies the files from the source folder into the target and renames the source files according to a time pattern")
-				.create("copyrename");
-		
-		Option targetDir = OptionBuilder
-				.withArgName("targetdir")
-				.hasArg()
-				.withDescription(
-						"the directory where the photos to be processed should be copied")
-				.create("targetdir");
-
-		res.addOption(sourceDir);
-		res.addOption(copyrename);
-		res.addOption(dryrun);
-		res.addOption(cleanDuplicates);
-		res.addOption(targetDir);
-
 		return res;
 	}
 }
