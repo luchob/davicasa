@@ -106,18 +106,8 @@ public class RemoveDuplicatedImagesProcessorTest
 		@Override
 		public String getMD5Sum(File file) throws IOException
 		{
-			if (file == mockFile1)
-			{
-				return "mockFile1";
-			}
-			else if (file == mockFile2)
-			{
-				return "mockFile2";
-			}
-			else
-			{
-				return null;
-			}
+			//just for testting purposes
+			return file.getName();
 		}
 
 	}

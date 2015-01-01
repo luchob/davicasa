@@ -137,7 +137,7 @@ public class FileRenameUtils
 		{
 			// no cache for this directory.
 			// initialize the cache.
-			cache = createFileCache(targetFile);
+			cache = createFileCache(targetDir);
 			targetFilesCache.put(targetDir, cache);
 		}
 
@@ -187,7 +187,7 @@ public class FileRenameUtils
 		File[] existingFiles = targetDir.listFiles(imageFilter);
 		for (File existingFile : existingFiles)
 		{
-			String md5 = md5Calculator.getMD5Sum(targetDir);
+			String md5 = md5Calculator.getMD5Sum(existingFile);
 
 			List<File> files = cache.get(md5);
 			if (files == null)

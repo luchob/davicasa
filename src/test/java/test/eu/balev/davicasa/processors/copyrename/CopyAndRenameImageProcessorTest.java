@@ -15,6 +15,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import test.eu.balev.davicasa.processors.TestMD5Calculator;
+
 import com.drew.imaging.ImageProcessingException;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
@@ -25,7 +27,6 @@ import com.google.inject.name.Names;
 import eu.balev.davicasa.ImageFileFilter;
 import eu.balev.davicasa.ImageFinder;
 import eu.balev.davicasa.MD5Calculator;
-import eu.balev.davicasa.MD5CalculatorImpl;
 import eu.balev.davicasa.processors.copyrename.CopyAndRenameImageProcessor;
 import eu.balev.davicasa.processors.copyrename.FileRenameUtils;
 import eu.balev.davicasa.processors.copyrename.ImageCreateDateExtractor;
@@ -102,7 +103,7 @@ public class CopyAndRenameImageProcessorTest
 
 			bind(ImageFinder.class).toInstance(new TestImageFinder());
 			bind(ImageCreateDateExtractor.class).toInstance(dateExtractorMock);
-			bind(MD5Calculator.class).to(MD5CalculatorImpl.class);
+			bind(MD5Calculator.class).to(TestMD5Calculator.class);
 		}
 	}
 
