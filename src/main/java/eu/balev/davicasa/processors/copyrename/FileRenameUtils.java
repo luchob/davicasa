@@ -29,9 +29,7 @@ public class FileRenameUtils
 	/*
 	 * Currently the target directory structure is:
 	 * 
-	 * YYYY 
-	 * 	 |----MM 
-	 *         |----DD
+	 * YYYY |----MM |----DD
 	 */
 
 	private static Logger logger = LoggerFactory
@@ -56,7 +54,7 @@ public class FileRenameUtils
 	@Inject
 	@Named("ImageFileFilter")
 	FileFilter imageFilter;
-	
+
 	@Inject
 	@Named("FileIdentityComparator")
 	Comparator<File> fileComparator;
@@ -113,21 +111,34 @@ public class FileRenameUtils
 			return null;
 		}
 
-		String ext = getFileExtension(aFile);
-		Integer index = getAndUpdateFreeIndex(imageDate, ext);
+		File duplicate = checkAndUpdateIdentity(targetDir, aFile);
 
-		File targetFile = new File(targetDir, getImageFileName(imageDate,
-				index, ext));
-
-		if (!dryRun)
+		if (duplicate == null)
 		{
-			copyFile(aFile, targetFile);
+			String ext = getFileExtension(aFile);
+			Integer index = getAndUpdateFreeIndex(imageDate, ext);
+
+			File targetFile = new File(targetDir, getImageFileName(imageDate,
+					index, ext));
+
+			if (!dryRun)
+			{
+				copyFile(aFile, targetFile);
+			}
+
+			logger.info("Copied {} to {}. Dry run enabled - {}.",
+					aFile.getAbsolutePath(), targetFile.getAbsolutePath(),
+					dryRun);
+
+			return targetFile;
 		}
-
-		logger.info("Copied {} to {}. Dry run enabled - {}.",
-				aFile.getAbsolutePath(), targetFile.getAbsolutePath(), dryRun);
-
-		return targetFile;
+		else
+		{
+			logger.info(
+					"There is an identical file of {} in the target - {}. Will not copy.",
+					aFile.getAbsolutePath(), duplicate.getAbsolutePath());
+			return null;
+		}
 	}
 
 	public File checkAndUpdateIdentity(File targetDir, File targetFile)
@@ -166,7 +177,7 @@ public class FileRenameUtils
 						return existingFile;
 					}
 				}
-				
+
 				existingFiles.add(targetFile);
 			}
 		}
@@ -186,19 +197,21 @@ public class FileRenameUtils
 		// initialize the cache with all files available
 		Map<String, List<File>> cache = new HashMap<>();
 		File[] existingFiles = targetDir.listFiles(imageFilter);
-		for (File existingFile : existingFiles)
+		if (existingFiles != null)
 		{
-			String md5 = md5Calculator.getMD5Sum(existingFile);
-
-			List<File> files = cache.get(md5);
-			if (files == null)
+			for (File existingFile : existingFiles)
 			{
-				files = new LinkedList<>();
-				cache.put(md5, files);
-			}
-			files.add(existingFile);
-		}
+				String md5 = md5Calculator.getMD5Sum(existingFile);
 
+				List<File> files = cache.get(md5);
+				if (files == null)
+				{
+					files = new LinkedList<>();
+					cache.put(md5, files);
+				}
+				files.add(existingFile);
+			}
+		}
 		return cache;
 	}
 
