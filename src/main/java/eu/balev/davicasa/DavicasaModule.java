@@ -10,8 +10,13 @@ import com.google.inject.name.Names;
 
 import eu.balev.davicasa.util.FileIdentityComparator;
 import eu.balev.davicasa.util.ImageFinder;
+import eu.balev.davicasa.util.MD5Calculator;
 import eu.balev.davicasa.util.impl.ImageFinderImpl;
+import eu.balev.davicasa.util.impl.MD5CalculatorImpl;
 
+/**
+ * A Guice module for the DaViCasa tool.
+ */
 public class DavicasaModule extends AbstractModule
 {
 

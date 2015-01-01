@@ -1,4 +1,4 @@
-package test.eu.balev.davicasa;
+package test.eu.balev.davicasa.util.impl;
 
 import java.io.File;
 import java.io.FileFilter;

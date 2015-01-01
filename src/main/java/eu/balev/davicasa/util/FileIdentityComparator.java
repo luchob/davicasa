@@ -10,6 +10,13 @@ import java.util.Comparator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * This implementation of a comparator compares files bitwise. If the files are
+ * of the same length the comparator makes a bitwise comparison and returns 0 or
+ * -1 if the files are identical or different. Otherwise the comparator compares
+ * the files based on their length.
+ * 
+ */
 public class FileIdentityComparator implements Comparator<File>
 {
 	private Logger logger = LoggerFactory

@@ -23,8 +23,8 @@ import com.google.inject.TypeLiteral;
 import com.google.inject.name.Names;
 
 import eu.balev.davicasa.ImageFileFilter;
-import eu.balev.davicasa.MD5Calculator;
 import eu.balev.davicasa.processors.copyrename.FileRenameUtils;
+import eu.balev.davicasa.util.MD5Calculator;
 
 /**
  * Tests the behavior of the

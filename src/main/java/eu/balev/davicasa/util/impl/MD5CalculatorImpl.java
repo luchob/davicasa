@@ -1,4 +1,4 @@
-package eu.balev.davicasa;
+package eu.balev.davicasa.util.impl;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -7,6 +7,8 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 import org.apache.commons.codec.binary.Hex;
+
+import eu.balev.davicasa.util.MD5Calculator;
 
 public class MD5CalculatorImpl implements MD5Calculator
 {

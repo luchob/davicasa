@@ -22,7 +22,7 @@ import javax.inject.Named;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import eu.balev.davicasa.MD5Calculator;
+import eu.balev.davicasa.util.MD5Calculator;
 
 public class FileRenameUtils
 {

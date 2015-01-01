@@ -21,9 +21,9 @@ import com.google.inject.Injector;
 import com.google.inject.name.Names;
 
 import eu.balev.davicasa.ImageFileFilter;
-import eu.balev.davicasa.MD5Calculator;
 import eu.balev.davicasa.processors.removeduplicates.RemoveDuplicatedImagesProcessor;
 import eu.balev.davicasa.util.ImageFinder;
+import eu.balev.davicasa.util.MD5Calculator;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RemoveDuplicatedImagesProcessorTest

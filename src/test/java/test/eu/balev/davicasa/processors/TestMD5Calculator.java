@@ -3,7 +3,7 @@ package test.eu.balev.davicasa.processors;
 import java.io.File;
 import java.io.IOException;
 
-import eu.balev.davicasa.MD5Calculator;
+import eu.balev.davicasa.util.MD5Calculator;
 
 /**
  * An MD5 calculator for testing purposes.
