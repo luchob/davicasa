@@ -9,6 +9,8 @@ import com.google.inject.TypeLiteral;
 import com.google.inject.name.Names;
 
 import eu.balev.davicasa.util.FileIdentityComparator;
+import eu.balev.davicasa.util.ImageFinder;
+import eu.balev.davicasa.util.impl.ImageFinderImpl;
 
 public class DavicasaModule extends AbstractModule
 {

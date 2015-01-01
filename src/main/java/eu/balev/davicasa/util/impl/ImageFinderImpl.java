@@ -1,4 +1,4 @@
-package eu.balev.davicasa;
+package eu.balev.davicasa.util.impl;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -12,6 +12,8 @@ import javax.inject.Named;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import eu.balev.davicasa.util.ImageFinder;
 
 public class ImageFinderImpl implements ImageFinder
 {

@@ -19,7 +19,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.name.Names;
 
-import eu.balev.davicasa.ImageFinderImpl;
+import eu.balev.davicasa.util.impl.ImageFinderImpl;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ImageFinderImplTest
