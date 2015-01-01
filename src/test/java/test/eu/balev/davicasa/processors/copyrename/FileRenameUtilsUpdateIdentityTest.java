@@ -14,6 +14,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import test.eu.balev.davicasa.processors.TestFileIdentityComparator;
 import test.eu.balev.davicasa.processors.TestMD5Calculator;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
@@ -24,18 +25,24 @@ import com.google.inject.name.Names;
 import eu.balev.davicasa.ImageFileFilter;
 import eu.balev.davicasa.MD5Calculator;
 import eu.balev.davicasa.processors.copyrename.FileRenameUtils;
-import eu.balev.davicasa.util.FileIdentityComparator;
 
+/**
+ * Tests the behavior of the
+ * {@link FileRenameUtils#checkAndUpdateIdentity(File, File)} method.
+ */
 @RunWith(MockitoJUnitRunner.class)
 public class FileRenameUtilsUpdateIdentityTest
 {
 	private FileRenameUtils fileRenameUtilsToTest;
 
 	@Mock
-	File emptyDirMock, fullDirMock;
+	File emptyDirMock, fullDir1Mock, fullDir2Mock;
 
 	@Mock
-	File img1MockFile, img2MockFile;
+	File dir1Img1MockFile, dir1Img2MockFile;
+
+	@Mock
+	File dir2Img1MockFile, dir2Img2MockFile;
 
 	@Before
 	public void setUp()
@@ -47,26 +54,51 @@ public class FileRenameUtilsUpdateIdentityTest
 		Injector injector = Guice.createInjector(new DavicasaTestModule());
 		injector.injectMembers(fileRenameUtilsToTest);
 
+		// initialize the names of the full directories
+		Mockito.when(fullDir1Mock.getName()).thenReturn("fullDir1Mock");
+		Mockito.when(fullDir2Mock.getName()).thenReturn("fullDir2Mock");
+
+		// make the full directories return some files
+		prepareDirMock(fullDir1Mock, dir1Img1MockFile, dir1Img2MockFile);
+		prepareDirMock(fullDir2Mock, dir2Img1MockFile, dir2Img2MockFile);
+
+		// make the empty dir return empty array for list files
+		prepareDirMock(emptyDirMock);
+	}
+
+	/**
+	 * Mocks the {@link File#getName()} of the files in the file array based on
+	 * the name of the mock directory. Mocks the
+	 * {@link File#listFiles(FileFilter)} method so that the mock directory
+	 * returns the files in the provided array.
+	 * 
+	 * @param dirMock
+	 *            the mock directory
+	 * @param files
+	 *            the files that should belong to the mock dir
+	 */
+	private void prepareDirMock(File dirMock, File... files)
+	{
 		// empty dir mock
-		Mockito.when(emptyDirMock.listFiles(Mockito.any(FileFilter.class)))
-				.thenReturn(new File[]
-				{});
+		Mockito.when(dirMock.listFiles(Mockito.any(FileFilter.class)))
+				.thenReturn(files);
+		String dirMockName = dirMock.getName();
 
-		Mockito.when(img1MockFile.getName()).thenReturn("img1MockFile");
-		Mockito.when(img2MockFile.getName()).thenReturn("img2MockFile");
+		for (int i = 0; i < files.length; i++)
+		{
+			Mockito.when(files[i].getName()).thenReturn(
+					dirMockName + "_mockFile_" + i);
+		}
 
-		Mockito.when(fullDirMock.listFiles(Mockito.any(FileFilter.class)))
-				.thenReturn(new File[]
-				{ img1MockFile, img2MockFile });
 	}
 
 	@Test
 	public void testCheckAndUpdateIdentityEmptyDir() throws IOException
 	{
 		File res = fileRenameUtilsToTest.checkAndUpdateIdentity(emptyDirMock,
-				img1MockFile);
+				dir1Img1MockFile);
 
-		Assert.assertNull("The result should be null, we expect no duplicates",
+		Assert.assertNull("The result should be null, we expect no duplicates.",
 				res);
 	}
 
@@ -76,23 +108,54 @@ public class FileRenameUtilsUpdateIdentityTest
 	{
 		File aRandomImageMock = Mockito.mock(File.class);
 
-		File res = fileRenameUtilsToTest.checkAndUpdateIdentity(fullDirMock,
+		File res = fileRenameUtilsToTest.checkAndUpdateIdentity(fullDir1Mock,
 				aRandomImageMock);
 
-		Assert.assertNull("The result should be null, we expect no duplicates",
+		Assert.assertNull("The result should be null, we expect no duplicates.",
 				res);
 	}
 
+	@Test
+	public void testCheckAndUpdateIdentityFullDirCollision() throws IOException
+	{
+		File res = fileRenameUtilsToTest.checkAndUpdateIdentity(fullDir1Mock,
+				dir1Img1MockFile);
+
+		Assert.assertNotNull("A duplicate should have been found.", res);
+		Assert.assertEquals("The mock file should be reported as duplicate.",
+				dir1Img1MockFile.getName(), res.getName());
+	}
+
+	@Test
+	public void testCheckAndUpdateIdentityTwoFullDirsCollision()
+			throws IOException
+	{
+		File res1 = fileRenameUtilsToTest.checkAndUpdateIdentity(fullDir1Mock,
+				dir1Img1MockFile);
+		File res2 = fileRenameUtilsToTest.checkAndUpdateIdentity(fullDir2Mock,
+				dir2Img1MockFile);
+
+		Assert.assertNotNull("A duplicate should have been found.", res1);
+		Assert.assertNotNull("A duplicate should have been found.", res2);
+
+		Assert.assertEquals("The mock file should be reported as duplicate.",
+				dir1Img1MockFile.getName(), res1.getName());
+		Assert.assertEquals("The mock file should be reported as duplicate.",
+				dir2Img1MockFile.getName(), res2.getName());
+	}
+
+	/**
+	 * A test module for this file rename utils.
+	 */
 	private class DavicasaTestModule extends AbstractModule
 	{
-
 		@Override
 		protected void configure()
 		{
 			bind(new TypeLiteral<Comparator<File>>()
 			{
 			}).annotatedWith(Names.named("FileIdentityComparator")).to(
-					FileIdentityComparator.class);
+					TestFileIdentityComparator.class);
 
 			bind(FileFilter.class)
 					.annotatedWith(Names.named("ImageFileFilter")).to(

@@ -29,7 +29,9 @@ public class FileRenameUtils
 	/*
 	 * Currently the target directory structure is:
 	 * 
-	 * YYYY |----MM |----DD
+	 * YYYY 
+	 * 	 |----MM 
+	 *         |----DD
 	 */
 
 	private static Logger logger = LoggerFactory
@@ -128,7 +130,6 @@ public class FileRenameUtils
 		return targetFile;
 	}
 
-	//TODO: use the identity check!!!
 	public File checkAndUpdateIdentity(File targetDir, File targetFile)
 			throws IOException
 	{
