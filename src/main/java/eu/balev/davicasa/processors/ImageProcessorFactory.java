@@ -1,8 +1,6 @@
-package eu.balev.davicasa;
+package eu.balev.davicasa.processors;
 
 import org.apache.commons.cli.CommandLine;
-
-import eu.balev.davicasa.processors.ImageProcessor;
 
 public interface ImageProcessorFactory {
 	

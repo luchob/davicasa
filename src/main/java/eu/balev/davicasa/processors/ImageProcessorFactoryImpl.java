@@ -1,4 +1,4 @@
-package eu.balev.davicasa;
+package eu.balev.davicasa.processors;
 
 import java.io.File;
 
@@ -6,8 +6,6 @@ import org.apache.commons.cli.CommandLine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import eu.balev.davicasa.processors.ImageProcessor;
-import eu.balev.davicasa.processors.ImageProcessorBase;
 import eu.balev.davicasa.processors.copyrename.CopyAndRenameImageProcessor;
 import eu.balev.davicasa.processors.removeduplicates.RemoveDuplicatedImagesProcessor;
 

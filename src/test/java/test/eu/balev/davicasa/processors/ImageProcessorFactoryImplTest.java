@@ -1,4 +1,4 @@
-package test.eu.balev.davicasa;
+package test.eu.balev.davicasa.processors;
 
 import java.io.FileFilter;
 import java.util.Comparator;
@@ -15,12 +15,12 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.name.Names;
 
-import eu.balev.davicasa.ImageFileFilter;
-import eu.balev.davicasa.ImageProcessorFactoryImpl;
 import eu.balev.davicasa.processors.ImageProcessor;
+import eu.balev.davicasa.processors.ImageProcessorFactoryImpl;
 import eu.balev.davicasa.processors.copyrename.CopyAndRenameImageProcessor;
 import eu.balev.davicasa.processors.removeduplicates.RemoveDuplicatedImagesProcessor;
 import eu.balev.davicasa.util.FileIdentityComparator;
+import eu.balev.davicasa.util.impl.ImageFileFilter;
 
 public class ImageProcessorFactoryImplTest
 {

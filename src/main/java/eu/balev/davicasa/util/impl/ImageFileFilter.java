@@ -1,8 +1,12 @@
-package eu.balev.davicasa;
+package eu.balev.davicasa.util.impl;
 
 import java.io.File;
 import java.io.FileFilter;
 
+/**
+ * This file filter implementation filters only the 
+ * currently supported image types.
+ */
 public class ImageFileFilter implements FileFilter {
 
 	@Override

@@ -12,8 +12,8 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 
 import eu.balev.davicasa.Davicasa;
-import eu.balev.davicasa.ImageProcessorFactory;
 import eu.balev.davicasa.processors.ImageProcessor;
+import eu.balev.davicasa.processors.ImageProcessorFactory;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DavicasaTest {

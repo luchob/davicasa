@@ -17,6 +17,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 
 import eu.balev.davicasa.processors.ImageProcessor;
+import eu.balev.davicasa.processors.ImageProcessorFactory;
 
 public class Davicasa
 {
