@@ -10,9 +10,9 @@ import com.google.inject.name.Names;
 
 import eu.balev.davicasa.processors.ImageProcessorFactory;
 import eu.balev.davicasa.processors.ImageProcessorFactoryImpl;
-import eu.balev.davicasa.util.FileIdentityComparator;
 import eu.balev.davicasa.util.ImageFinder;
 import eu.balev.davicasa.util.MD5Calculator;
+import eu.balev.davicasa.util.impl.FileIdentityComparator;
 import eu.balev.davicasa.util.impl.ImageFileFilter;
 import eu.balev.davicasa.util.impl.ImageFinderImpl;
 import eu.balev.davicasa.util.impl.MD5CalculatorImpl;

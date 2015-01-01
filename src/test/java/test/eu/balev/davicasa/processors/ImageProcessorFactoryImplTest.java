@@ -19,7 +19,7 @@ import eu.balev.davicasa.processors.ImageProcessor;
 import eu.balev.davicasa.processors.ImageProcessorFactoryImpl;
 import eu.balev.davicasa.processors.copyrename.CopyAndRenameImageProcessor;
 import eu.balev.davicasa.processors.removeduplicates.RemoveDuplicatedImagesProcessor;
-import eu.balev.davicasa.util.FileIdentityComparator;
+import eu.balev.davicasa.util.impl.FileIdentityComparator;
 import eu.balev.davicasa.util.impl.ImageFileFilter;
 
 public class ImageProcessorFactoryImplTest

@@ -27,9 +27,9 @@ import com.google.inject.name.Names;
 import eu.balev.davicasa.processors.copyrename.CopyAndRenameImageProcessor;
 import eu.balev.davicasa.processors.copyrename.FileRenameUtils;
 import eu.balev.davicasa.processors.copyrename.ImageCreateDateExtractor;
-import eu.balev.davicasa.util.FileIdentityComparator;
 import eu.balev.davicasa.util.ImageFinder;
 import eu.balev.davicasa.util.MD5Calculator;
+import eu.balev.davicasa.util.impl.FileIdentityComparator;
 import eu.balev.davicasa.util.impl.ImageFileFilter;
 
 @RunWith(MockitoJUnitRunner.class)
