@@ -1,0 +1,30 @@
+
+-----------------------------------------------------------------
+Welcome to the DaviCasa tool!
+
+This is a command line tool that is able to process JPEG files which contain EXIF data.
+The tool is configured with command line options and is able to accomplish two tasks:
+
+1. To make a recursive check in a directory for images that might be duplicated. Example arguments:
+
+-cleansrcduplicates -sourcedir /path/to/the/directory
+
+2. To copy and rename the images from a source directory to a target directory following a naming pattern dependent on the date when the image was created.
+The date when the image was created is extracted from the EXIF data. A sample directory structure is:
+
+2014
+  |--> 02
+        |-->10
+        |-->14
+        +-->23
+  |--> 12
+        |-->25
+
+If there are duplicated files in the target directory the tool will detect them.
+
+Example arguments:
+
+-copyrename -sourcedir /path/to/the/source/dir -targetdir /path/to/the/target/dir
+
+Both modes support the 'dryrun' option. When dryrun is enabled the tool will try to approximate and print the actions that will be performed but nothing will be written on disk.
+The 'help' option prints this file and the usage arguments. The 'copyrename' and 'cleansrcduplicates' cannot be used simultaneously.
