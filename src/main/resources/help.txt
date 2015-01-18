@@ -28,3 +28,4 @@ Example arguments:
 
 Both modes support the 'dryrun' option. When dryrun is enabled the tool will try to approximate and print the actions that will be performed but nothing will be written on disk.
 The 'help' option prints this file and the usage arguments. The 'copyrename' and 'cleansrcduplicates' cannot be used simultaneously.
+

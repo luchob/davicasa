@@ -55,8 +55,8 @@ public class Davicasa
 
 			System.exit(-1);
 		}
-
-		if (line.hasOption(CLOptionsEnum.HELP.getName()))
+		
+		if (line.getOptions().length == 0 || line.hasOption(CLOptionsEnum.HELP.getName()))
 		{
 			printHelpMessages(options);
 		}
@@ -155,8 +155,7 @@ public class Davicasa
 
 		if (processor == null)
 		{
-			logger.error("Sorry. Unable to continue based on these command line parameters... Printing help message..");
-			printHelpMessages(buildOptions());
+			logger.error("Sorry. Unable to continue based on these command line parameters... ");
 		}
 		else
 		{
