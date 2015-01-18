@@ -13,7 +13,7 @@ There is no binary distibution currently. The tool can be built from source only
 
 <pre>mvn package</pre>
 
-If the build is successfull in the target directory there should be a jar file named like <code>davicasa-1.0-SNAPSHOT-jar-with-dependencies.jar</code>. As the name implies the file contains the class files of davicasa as well as the classes of all dependencies user by the tool.
+If the build was successful in the target directory there should be a jar file named like <code>davicasa-1.0-SNAPSHOT-jar-with-dependencies.jar</code>. As the name implies the file contains the class files of davicasa as well as the classes of all dependencies used by the tool. The distibution contains some help resources.
 
 #Running
 
@@ -25,6 +25,9 @@ This will print verbose usage information.
 
 #Todo
 
-The deployment will be made easier and a shell script will be provided so that the start of the tool will be less verbose.
+- provide binary distribution;
+- an even more complete help;
+- a more cooperative output when the user provide wrong input;
+- some javadoc;
 
 
