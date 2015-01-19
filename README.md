@@ -19,7 +19,7 @@ If the build was successful in the target directory there should be a jar file n
 
 The tool can be executed with java. Example:
 
-<pre> $java -cp davicasa-1.0-SNAPSHOT-jar-with-dependencies.jar eu.balev.davicasa.Davicasa --help</pre>
+<pre> $java -cp davicasa-1.0-SNAPSHOT-jar-with-dependencies.jar eu.balev.davicasa.Davicasa -help</pre>
 
 This will print verbose usage information.
 
