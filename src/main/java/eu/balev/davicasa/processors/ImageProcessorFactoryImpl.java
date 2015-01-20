@@ -23,8 +23,15 @@ public class ImageProcessorFactoryImpl implements ImageProcessorFactory
 
 		boolean dryRun = line.hasOption(DRY_RUN.getName());
 
-		if (line.hasOption(COPY_RENAME.getName()))
+		if (line.hasOption(COPY_RENAME.getName())
+				&& line.hasOption(CLEAN_SRC_DUPLICATES.getName()))
 		{
+			printErrorMsgForSimultaneousdParams(COPY_RENAME,
+					CLEAN_SRC_DUPLICATES);
+		}
+		else if (line.hasOption(COPY_RENAME.getName()))
+		{
+			// copy and rename operation
 			if (line.hasOption(SOURCE_DIR.getName())
 					&& line.hasOption(TARGET_DIR.getName()))
 			{
@@ -48,6 +55,10 @@ public class ImageProcessorFactoryImpl implements ImageProcessorFactory
 				File sourceDir = new File(line.getOptionValue(
 						SOURCE_DIR.getName()).toString());
 
+				if (line.hasOption(TARGET_DIR.getName()))
+				{
+					printWarnMsgForUnusedParams(TARGET_DIR);
+				}
 				ret = new RemoveDuplicatedImagesProcessor(sourceDir);
 
 			}
@@ -65,6 +76,45 @@ public class ImageProcessorFactoryImpl implements ImageProcessorFactory
 		return ret;
 	}
 
+	private void printWarnMsgForUnusedParams(CLOptionsEnum... unusedOptions)
+	{
+
+		StringBuilder sb = new StringBuilder();
+
+		sb.append("The tool will not use some of the parameters which you specified, because they are not relevant to the requested operation. Unused are: ");
+		sb.append(getCLOptionsAsString(unusedOptions));
+
+		logger.error(sb.toString());
+	}
+
+	private void printErrorMsgForSimultaneousdParams(
+			CLOptionsEnum... exclusiveOptions)
+	{
+
+		StringBuilder sb = new StringBuilder();
+
+		sb.append("The following parameters are mutually exclusive and the tool cannot execute when these are provided: ");
+		sb.append(getCLOptionsAsString(exclusiveOptions));
+
+		logger.error(sb.toString());
+	}
+
+	private String getCLOptionsAsString(CLOptionsEnum... options)
+	{
+		StringBuilder sb = new StringBuilder("[");
+		for (int i = 0; i < options.length; i++)
+		{
+			sb.append(options[i].getName());
+			if (i < options.length - 1)
+			{
+				sb.append(", ");
+			}
+		}
+		sb.append("]");
+
+		return sb.toString();
+	}
+
 	private void printErrorMsgForRequiredParams(CLOptionsEnum operation,
 			CLOptionsEnum... requireds)
 	{
@@ -74,17 +124,8 @@ public class ImageProcessorFactoryImpl implements ImageProcessorFactory
 				.append("] requires the following option")
 				.append(requireds.length > 1 ? "s" : "").append(": ");
 
-		sb.append("[");
-		for (int i = 0; i < requireds.length; i++)
-		{
-			sb.append(requireds[i].getName());
-			if (i < requireds.length - 1)
-			{
-				sb.append(", ");
-			}
-		}
-		sb.append("].");
-
+		sb.append(getCLOptionsAsString(requireds));
+	
 		logger.error(sb.toString());
 	}
 }

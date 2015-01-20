@@ -23,6 +23,11 @@ import eu.balev.davicasa.processors.CLOptionsEnum;
 import eu.balev.davicasa.processors.ImageProcessor;
 import eu.balev.davicasa.processors.ImageProcessorFactory;
 
+/**
+ * The entry point of the tool. Start with option <code>--help</code> to get
+ * detailed instructions.
+ * 
+ */
 public class Davicasa
 {
 	private static Logger logger = LoggerFactory.getLogger(Davicasa.class);
@@ -55,15 +60,16 @@ public class Davicasa
 
 			System.exit(-1);
 		}
-		
-		if (line.getOptions().length == 0 || line.hasOption(CLOptionsEnum.HELP.getName()))
+
+		printPassedArgs(line);
+
+		if (line.getOptions().length == 0
+				|| line.hasOption(CLOptionsEnum.HELP.getName()))
 		{
 			printHelpMessages(options);
 		}
 		else
 		{
-			printPassedArgs(line);
-
 			Davicasa davicasa = new Davicasa();
 			davicasa.process(line, Guice.createInjector(new DavicasaModule()));
 		}
@@ -97,7 +103,7 @@ public class Davicasa
 					logger.error(ioe.getMessage(), ioe);
 				}
 			}
-			
+
 			HelpFormatter formatter = new HelpFormatter();
 			formatter.printHelp("Davicasa", options);
 		}
@@ -130,20 +136,26 @@ public class Davicasa
 	{
 		Option[] lineOptions = line.getOptions();
 
-		StringBuilder sb = new StringBuilder();
-		sb.append(System.lineSeparator());
-		for (Option option : lineOptions)
+		if (lineOptions != null && lineOptions.length > 0)
 		{
-			sb.append(option.getArgName())
-					.append(": ")
-					.append(option.getValue() != null ? option.getValue()
-							: "[available]");
+			StringBuilder sb = new StringBuilder();
 			sb.append(System.lineSeparator());
+			for (Option option : lineOptions)
+			{
+				sb.append(option.getArgName())
+						.append(": ")
+						.append(option.getValue() != null ? option.getValue()
+								: "[available]");
+				sb.append(System.lineSeparator());
+			}
+			logger.info(
+					"Trying to start the tool with the following parameters: {}",
+					sb.toString());
 		}
-
-		logger.info(
-				"Trying to start the tool with the following parameters: {}",
-				sb.toString());
+		else
+		{
+			logger.info("Starting the tool with no parameters... ");
+		}
 
 	}
 
@@ -155,13 +167,14 @@ public class Davicasa
 
 		if (processor == null)
 		{
-			logger.error("Sorry. Unable to continue based on these command line parameters... ");
+			logger.error("Alas - it will not work... Cannot create a processor based on the current parameters... Call the tool with the help option.");
 		}
 		else
 		{
 			injector.injectMembers(processor);
-			logger.info("Found prooper image processor. Starting image processing...");
-			logger.info("Running processor of class {} ", processor.getClass());
+			logger.info("Found proper image processor. Starting image processing...");
+			logger.info("Running processor of class {} ", processor.getClass()
+					.getSimpleName());
 			try
 			{
 				processor.process();
