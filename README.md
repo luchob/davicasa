@@ -28,6 +28,3 @@ From this folder:
 <pre> $java -cp davicasa.jar eu.balev.davicasa.Davicasa -help</pre>
 
 This will print verbose usage information.
-
-
-
