@@ -25,7 +25,7 @@ public class RemoveDuplicatedImagesProcessor extends ImageProcessorBase
 {
 
 	private final Logger logger = LoggerFactory
-			.getLogger(CopyAndRenameImageProcessor.class);
+			.getLogger(RemoveDuplicatedImagesProcessor.class);
 	
 	@Inject ImageFinder imageFinder;
 	

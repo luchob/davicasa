@@ -19,8 +19,14 @@ public class ImageCreateDateExtractor
 
 		ExifIFD0Directory exifDir = metadata
 				.getDirectory(ExifIFD0Directory.class);
-
-		return exifDir.getDate(ExifIFD0Directory.TAG_DATETIME);
+		
+		if (exifDir == null)
+		{
+			return null;
+		}
+		else
+		{
+			return exifDir.getDate(ExifIFD0Directory.TAG_DATETIME);
+		}
 	}
-
 }
