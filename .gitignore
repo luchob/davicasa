@@ -1,5 +1,7 @@
 #the maven target dir
-target/
+.gradle/
+bin
 .project
 .classpath
 .settings
+build/
