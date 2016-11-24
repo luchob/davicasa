@@ -9,22 +9,16 @@ The tool supports a "dry-run" option - it will try to output all the operations 
 
 #Running
 
-There is no binary distribution. However the tool can be easily built with maven. Maven should be correctly installed of course. 
+There is no binary distribution. However the tool can be easily built with gradle. Gradle should be correctly installed of course. 
 
-Download the sources. From the main project directory run:
+Download or clone the sources. From the main project directory run:
 
-<pre>mvn package</pre>
+<pre>gradlew installApp</pre>
 
-If this is successful In the newly created <pre>./target/final</pre> there should be the final jar file and a helper batch file for Windows users. Take these files and put them in a directory of your choice.
+If this is successful (assuming standard directory structure) in the newly created folder <pre>./build/install/davicasa/bin</pre> there should be a shell script that is able to run the application. Take these files and put them in a directory of your choice.
 
-From this folder:
+From this folder run:
 
-- under Windows:
+- for example, under Windows:
 
 <pre>davicasa -help</pre>
-
-- under Linux:
-
-<pre> $java -cp davicasa.jar eu.balev.davicasa.Davicasa -help</pre>
-
-This will print verbose usage information.
