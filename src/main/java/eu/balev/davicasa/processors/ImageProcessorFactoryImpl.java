@@ -18,54 +18,71 @@ import eu.balev.davicasa.processors.copyrename.CopyAndRenameImageProcessor;
 import eu.balev.davicasa.processors.removeduplicates.RemoveDuplicatedImagesProcessor;
 
 public class ImageProcessorFactoryImpl implements ImageProcessorFactory {
-	
+
 	@InjectLogger
 	private Logger logger;
 
 	@Override
 	public ImageProcessor tryCreateProcessor(CommandLine line) {
-		ImageProcessorBase ret = null;
-
-		boolean dryRun = line.hasOption(DRY_RUN.getName());
 
 		if (line.hasOption(COPY_RENAME.getName())
 				&& line.hasOption(CLEAN_SRC_DUPLICATES.getName())) {
+			
+			//we do not support both copy and rename and 
+			//clean up in the same run
 			printErrorMsgForSimultaneousdParams(COPY_RENAME,
 					CLEAN_SRC_DUPLICATES);
-		} else if (line.hasOption(COPY_RENAME.getName())) {
-			// copy and rename operation
-			if (line.hasOption(SOURCE_DIR.getName())
-					&& line.hasOption(TARGET_DIR.getName())) {
-				File sourceDir = new File(line.getOptionValue(
-						SOURCE_DIR.getName()).toString());
-				File targetDir = new File(line.getOptionValue(
-						TARGET_DIR.getName()).toString());
-
-				ret = new CopyAndRenameImageProcessor(sourceDir, targetDir);
-			} else {
-				printErrorMsgForRequiredParams(COPY_RENAME, SOURCE_DIR,
-						TARGET_DIR);
-			}
+			return null;
+		} 
+		
+		ImageProcessorBase ret = null;
+		
+		if (line.hasOption(COPY_RENAME.getName())) {
+			ret = tryCreateCopyAndRename(line);
 		} else if (line.hasOption(CLEAN_SRC_DUPLICATES.getName())) {
-			if (line.hasOption(SOURCE_DIR.getName())) {
-				File sourceDir = new File(line.getOptionValue(
-						SOURCE_DIR.getName()).toString());
-
-				if (line.hasOption(TARGET_DIR.getName())) {
-					printWarnMsgForUnusedParams(TARGET_DIR);
-				}
-				ret = new RemoveDuplicatedImagesProcessor(sourceDir);
-
-			} else {
-				printErrorMsgForRequiredParams(CLEAN_SRC_DUPLICATES, SOURCE_DIR);
-			}
+			ret = tryCreateCleanSrcDuplicates(line);
 		}
 
 		if (ret != null) {
-			ret.setDryRun(dryRun);
+			ret.setDryRun(line.hasOption(DRY_RUN.getName()));
 		}
 
 		return ret;
+	}
+
+	private ImageProcessorBase tryCreateCleanSrcDuplicates(CommandLine line)
+	{
+		if (line.hasOption(SOURCE_DIR.getName())) {
+			
+			File sourceDir = new File(line.getOptionValue(
+					SOURCE_DIR.getName()).toString());
+
+			if (line.hasOption(TARGET_DIR.getName())) {
+				printWarnMsgForUnusedParams(TARGET_DIR);
+			}
+			return new RemoveDuplicatedImagesProcessor(sourceDir);
+
+		} else {
+			printErrorMsgForRequiredParams(CLEAN_SRC_DUPLICATES, SOURCE_DIR);
+			return null;
+		}
+	}
+	
+	private ImageProcessorBase tryCreateCopyAndRename(CommandLine line) {
+		
+		// copy and rename operation
+		if (line.hasOption(SOURCE_DIR.getName())
+				&& line.hasOption(TARGET_DIR.getName())) {
+			File sourceDir = new File(line.getOptionValue(SOURCE_DIR.getName())
+					.toString());
+			File targetDir = new File(line.getOptionValue(TARGET_DIR.getName())
+					.toString());
+
+			return new CopyAndRenameImageProcessor(sourceDir, targetDir);
+		} else {
+			printErrorMsgForRequiredParams(COPY_RENAME, SOURCE_DIR, TARGET_DIR);
+			return null;
+		}
 	}
 
 	private void printWarnMsgForUnusedParams(CLOptionsEnum... unusedOptions) {
@@ -90,19 +107,16 @@ public class ImageProcessorFactoryImpl implements ImageProcessorFactory {
 	}
 
 	private String getCLOptionsAsString(CLOptionsEnum... options) {
-		
-		String joinedOpts = 
-				Arrays.
-					stream(options).
-					map(o -> o.getName()).
-					collect(Collectors.joining(", "));
-		
+
+		String joinedOpts = Arrays.stream(options).map(o -> o.getName())
+				.collect(Collectors.joining(", "));
+
 		return new StringBuilder("[").append(joinedOpts).append("]").toString();
 	}
 
 	private void printErrorMsgForRequiredParams(CLOptionsEnum operation,
 			CLOptionsEnum... requireds) {
-		
+
 		StringBuilder sb = new StringBuilder();
 
 		sb.append("The operation [").append(operation.getName())

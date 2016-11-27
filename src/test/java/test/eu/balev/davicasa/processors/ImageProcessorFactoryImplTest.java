@@ -1,37 +1,36 @@
 package test.eu.balev.davicasa.processors;
 
-import java.io.FileFilter;
-import java.util.Comparator;
+import static org.mockito.Mockito.when;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.ParseException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.matcher.Matchers;
-import com.google.inject.name.Names;
 
 import eu.balev.davicasa.inject.SLF4JTypeListener;
 import eu.balev.davicasa.processors.ImageProcessor;
 import eu.balev.davicasa.processors.ImageProcessorFactoryImpl;
 import eu.balev.davicasa.processors.copyrename.CopyAndRenameImageProcessor;
 import eu.balev.davicasa.processors.removeduplicates.RemoveDuplicatedImagesProcessor;
-import eu.balev.davicasa.util.impl.FileIdentityComparator;
-import eu.balev.davicasa.util.impl.ImageFileFilter;
 
-public class ImageProcessorFactoryImplTest
-{
-
+@RunWith(MockitoJUnitRunner.class)
+public class ImageProcessorFactoryImplTest {
 	private ImageProcessorFactoryImpl factoryToTest;
 
+	@Mock
+	private CommandLine mockLine;
+
 	@Before
-	public void setUp()
-	{
+	public void setUp() {
 		factoryToTest = new ImageProcessorFactoryImpl();
 
 		Injector injector = Guice.createInjector(new DavicasaTestModule());
@@ -39,29 +38,66 @@ public class ImageProcessorFactoryImplTest
 	}
 
 	@Test
-	public void testNoProcessorCreated() throws ParseException
-	{
-		CommandLine line = Mockito.mock(CommandLine.class);
-
-		ImageProcessor imageProcessor = factoryToTest.tryCreateProcessor(line);
-
-		Assert.assertNull("The image processors should be null", imageProcessor);
-
+	public void testNoOptions() throws ParseException {
+		assertNoProcessor();
 	}
 
 	@Test
-	public void testCreateCopyAndRenameImageProcessor()
-	{
-		CommandLine line = Mockito.mock(CommandLine.class);
+	public void testExclusiveOptions() {
+		when(mockLine.hasOption("copyrename")).thenReturn(true);
+		when(mockLine.hasOption("cleansrcduplicates")).thenReturn(true);
 
-		Mockito.when(line.hasOption("copyrename")).thenReturn(true);
-		Mockito.when(line.hasOption("sourcedir")).thenReturn(true);
-		Mockito.when(line.hasOption("targetdir")).thenReturn(true);
+		assertNoProcessor();
+	}
 
-		Mockito.when(line.getOptionValue("sourcedir")).thenReturn("src");
-		Mockito.when(line.getOptionValue("targetdir")).thenReturn("target");
+	@Test
+	public void testRemoveDuplicatedImagesProcessorNoSourceDir() {
+		when(mockLine.hasOption("cleansrcduplicates")).thenReturn(true);
+		when(mockLine.hasOption("sourcedir")).thenReturn(false);
 
-		ImageProcessor imageProcessor = factoryToTest.tryCreateProcessor(line);
+		assertNoProcessor();
+	}
+	
+	@Test
+	public void testCreateCopyAndRenameImageProcessorNoSrc() {
+
+		when(mockLine.hasOption("copyrename")).thenReturn(true);
+		when(mockLine.hasOption("sourcedir")).thenReturn(false);
+		when(mockLine.hasOption("targetdir")).thenReturn(true);
+
+		assertNoProcessor();
+	}
+	
+	@Test
+	public void testCreateCopyAndRenameImageProcessorNoTarget() {
+
+		when(mockLine.hasOption("copyrename")).thenReturn(true);
+		when(mockLine.hasOption("sourcedir")).thenReturn(true);
+		when(mockLine.hasOption("targetdir")).thenReturn(false);
+
+		assertNoProcessor();
+	}
+
+
+	private void assertNoProcessor() {
+		ImageProcessor imageProcessor = factoryToTest
+				.tryCreateProcessor(mockLine);
+
+		Assert.assertNull(imageProcessor);
+	}
+
+	@Test
+	public void testCreateCopyAndRenameImageProcessor() {
+
+		when(mockLine.hasOption("copyrename")).thenReturn(true);
+		when(mockLine.hasOption("sourcedir")).thenReturn(true);
+		when(mockLine.hasOption("targetdir")).thenReturn(true);
+
+		when(mockLine.getOptionValue("sourcedir")).thenReturn("src");
+		when(mockLine.getOptionValue("targetdir")).thenReturn("target");
+
+		ImageProcessor imageProcessor = factoryToTest
+				.tryCreateProcessor(mockLine);
 
 		Assert.assertNotNull("The image processors should not be null",
 				imageProcessor);
@@ -72,18 +108,16 @@ public class ImageProcessorFactoryImplTest
 	}
 
 	@Test
-	public void testRemoveDuplicatedImagesProcessor()
-	{
-		CommandLine line = Mockito.mock(CommandLine.class);
+	public void testRemoveDuplicatedImagesProcessor() {
+		when(mockLine.hasOption("cleansrcduplicates")).thenReturn(true);
+		when(mockLine.hasOption("sourcedir")).thenReturn(true);
+		when(mockLine.hasOption("targetdir")).thenReturn(true);
 
-		Mockito.when(line.hasOption("cleansrcduplicates")).thenReturn(true);
-		Mockito.when(line.hasOption("sourcedir")).thenReturn(true);
-		Mockito.when(line.hasOption("targetdir")).thenReturn(true);
+		when(mockLine.getOptionValue("sourcedir")).thenReturn("src");
+		when(mockLine.getOptionValue("targetdir")).thenReturn("target");
 
-		Mockito.when(line.getOptionValue("sourcedir")).thenReturn("src");
-		Mockito.when(line.getOptionValue("targetdir")).thenReturn("target");
-
-		ImageProcessor imageProcessor = factoryToTest.tryCreateProcessor(line);
+		ImageProcessor imageProcessor = factoryToTest
+				.tryCreateProcessor(mockLine);
 
 		Assert.assertNotNull("The image processors should not be null",
 				imageProcessor);
@@ -93,18 +127,9 @@ public class ImageProcessorFactoryImplTest
 						.getClass()));
 	}
 
-	private class DavicasaTestModule extends AbstractModule
-	{
-
+	private class DavicasaTestModule extends AbstractModule {
 		@Override
-		protected void configure()
-		{
-			bind(FileFilter.class)
-					.annotatedWith(Names.named("ImageFileFilter")).to(
-							ImageFileFilter.class);
-			bind(Comparator.class).annotatedWith(
-					Names.named("FileIdentityComparator")).to(
-					FileIdentityComparator.class);
+		protected void configure() {
 			bindListener(Matchers.any(), new SLF4JTypeListener());
 		}
 
