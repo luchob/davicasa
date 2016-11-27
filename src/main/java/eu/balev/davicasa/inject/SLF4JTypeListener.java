@@ -1,6 +1,7 @@
 package eu.balev.davicasa.inject;
 
 import java.lang.reflect.Field;
+import java.util.Arrays;
 
 import org.slf4j.Logger;
 
@@ -20,16 +21,18 @@ public class SLF4JTypeListener implements TypeListener {
 		Class<?> clazz = typeLiteral.getRawType();
 
 		while (clazz != null) {
-
-			// any fields which are annotated with inject logger
-			for (Field field : clazz.getDeclaredFields()) {
-				if (field.getType() == Logger.class
-						&& field.isAnnotationPresent(InjectLogger.class)) {
-
-					typeEncounter.register(new SLF4JMembersInjector<T>(field));
-				}
-			}
+			//add listener for any field
+			Arrays.stream(clazz.getDeclaredFields())
+					.filter(this::isLoggerField)
+					.forEach(
+							f -> typeEncounter
+									.register(new SLF4JMembersInjector<T>(f)));
 			clazz = clazz.getSuperclass();
 		}
+	}
+
+	private boolean isLoggerField(Field f) {
+		return f.getType() == Logger.class
+				&& f.isAnnotationPresent(InjectLogger.class);
 	}
 }

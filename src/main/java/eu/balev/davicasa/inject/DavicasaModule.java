@@ -1,4 +1,4 @@
-package eu.balev.davicasa;
+package eu.balev.davicasa.inject;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -9,7 +9,6 @@ import com.google.inject.TypeLiteral;
 import com.google.inject.matcher.Matchers;
 import com.google.inject.name.Names;
 
-import eu.balev.davicasa.inject.SLF4JTypeListener;
 import eu.balev.davicasa.processors.ImageProcessorFactory;
 import eu.balev.davicasa.processors.ImageProcessorFactoryImpl;
 import eu.balev.davicasa.util.ImageFinder;

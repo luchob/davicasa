@@ -3,6 +3,7 @@ package eu.balev.davicasa;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+
 import javax.inject.Inject;
 
 import org.apache.commons.cli.CommandLine;
@@ -19,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
+import eu.balev.davicasa.inject.DavicasaModule;
 import eu.balev.davicasa.processors.CLOptionsEnum;
 import eu.balev.davicasa.processors.ImageProcessor;
 import eu.balev.davicasa.processors.ImageProcessorFactory;
