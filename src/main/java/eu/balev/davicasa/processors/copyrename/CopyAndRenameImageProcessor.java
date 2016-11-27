@@ -1,14 +1,12 @@
 package eu.balev.davicasa.processors.copyrename;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import org.slf4j.Logger;
 
@@ -24,10 +22,6 @@ public class CopyAndRenameImageProcessor extends ImageProcessorBase
 	private Logger logger;
 	
 	private final File targetDir;
-
-	@Inject
-	@Named("ImageFileFilter")
-	private FileFilter imageFilter;
 	
 	@Inject 
 	private ImageFinder imageFinder;

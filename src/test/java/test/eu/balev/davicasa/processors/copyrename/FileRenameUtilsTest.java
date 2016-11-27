@@ -13,7 +13,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import test.eu.balev.davicasa.processors.TestFileIdentityComparator;
-import test.eu.balev.davicasa.util.impl.TestHashCalculator;
+import test.eu.balev.davicasa.util.TestHashCalculator;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
@@ -24,8 +24,8 @@ import com.google.inject.name.Names;
 
 import eu.balev.davicasa.inject.SLF4JTypeListener;
 import eu.balev.davicasa.processors.copyrename.FileRenameUtils;
+import eu.balev.davicasa.util.ImageFileFilter;
 import eu.balev.davicasa.util.ImageHashCalculator;
-import eu.balev.davicasa.util.impl.ImageFileFilter;
 
 public class FileRenameUtilsTest
 {

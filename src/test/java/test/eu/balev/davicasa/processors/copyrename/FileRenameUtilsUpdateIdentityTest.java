@@ -14,7 +14,7 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import test.eu.balev.davicasa.processors.TestFileIdentityComparator;
-import test.eu.balev.davicasa.util.impl.TestHashCalculator;
+import test.eu.balev.davicasa.util.TestHashCalculator;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
@@ -23,8 +23,8 @@ import com.google.inject.TypeLiteral;
 import com.google.inject.name.Names;
 
 import eu.balev.davicasa.processors.copyrename.FileRenameUtils;
+import eu.balev.davicasa.util.ImageFileFilter;
 import eu.balev.davicasa.util.ImageHashCalculator;
-import eu.balev.davicasa.util.impl.ImageFileFilter;
 
 /**
  * Tests the behavior of the

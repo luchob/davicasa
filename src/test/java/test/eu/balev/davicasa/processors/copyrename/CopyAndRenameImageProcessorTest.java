@@ -15,7 +15,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import test.eu.balev.davicasa.util.impl.TestHashCalculator;
+import test.eu.balev.davicasa.util.TestHashCalculator;
 
 import com.drew.imaging.ImageProcessingException;
 import com.google.inject.AbstractModule;
@@ -29,10 +29,10 @@ import eu.balev.davicasa.inject.SLF4JTypeListener;
 import eu.balev.davicasa.processors.copyrename.CopyAndRenameImageProcessor;
 import eu.balev.davicasa.processors.copyrename.FileRenameUtils;
 import eu.balev.davicasa.processors.copyrename.ImageCreateDateExtractor;
+import eu.balev.davicasa.util.FileIdentityComparator;
+import eu.balev.davicasa.util.ImageFileFilter;
 import eu.balev.davicasa.util.ImageFinder;
 import eu.balev.davicasa.util.ImageHashCalculator;
-import eu.balev.davicasa.util.impl.FileIdentityComparator;
-import eu.balev.davicasa.util.impl.ImageFileFilter;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CopyAndRenameImageProcessorTest

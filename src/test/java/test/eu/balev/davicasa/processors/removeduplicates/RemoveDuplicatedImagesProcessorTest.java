@@ -14,7 +14,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import test.eu.balev.davicasa.util.impl.TestHashCalculator;
+import test.eu.balev.davicasa.util.TestHashCalculator;
 
 import com.drew.imaging.ImageProcessingException;
 import com.google.inject.AbstractModule;
@@ -25,9 +25,9 @@ import com.google.inject.name.Names;
 
 import eu.balev.davicasa.inject.SLF4JTypeListener;
 import eu.balev.davicasa.processors.removeduplicates.RemoveDuplicatedImagesProcessor;
+import eu.balev.davicasa.util.ImageFileFilter;
 import eu.balev.davicasa.util.ImageFinder;
 import eu.balev.davicasa.util.ImageHashCalculator;
-import eu.balev.davicasa.util.impl.ImageFileFilter;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RemoveDuplicatedImagesProcessorTest

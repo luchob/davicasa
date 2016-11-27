@@ -1,4 +1,4 @@
-package eu.balev.davicasa.util.impl;
+package eu.balev.davicasa.util;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -54,11 +54,11 @@ public class FileIdentityComparator implements Comparator<File>
 		byte fis1Bytes[] = new byte[buffSize];
 		byte fis2Bytes[] = new byte[buffSize];
 
-		try (FileInputStream fis1 = new FileInputStream(file1);
-				FileInputStream fis2 = new FileInputStream(file2))
+		try (InputStream is1 = new FileInputStream(file1);
+				InputStream is2 = new FileInputStream(file2))
 		{
-			int read1 = getFullBuffer(fis1, fis1Bytes);
-			int read2 = getFullBuffer(fis2, fis2Bytes);
+			int read1 = getFullBuffer(is1, fis1Bytes);
+			int read2 = getFullBuffer(is2, fis2Bytes);
 
 			if (read1 != read2 || (!equals(fis1Bytes, fis2Bytes, read1)))
 			{

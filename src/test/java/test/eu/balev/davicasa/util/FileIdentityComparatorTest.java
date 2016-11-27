@@ -1,4 +1,4 @@
-package test.eu.balev.davicasa.util.impl;
+package test.eu.balev.davicasa.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -10,7 +10,7 @@ import java.util.Random;
 import org.junit.Assert;
 import org.junit.Test;
 
-import eu.balev.davicasa.util.impl.FileIdentityComparator;
+import eu.balev.davicasa.util.FileIdentityComparator;
 
 public class FileIdentityComparatorTest
 {

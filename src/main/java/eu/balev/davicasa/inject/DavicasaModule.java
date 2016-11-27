@@ -11,10 +11,10 @@ import com.google.inject.name.Names;
 
 import eu.balev.davicasa.processors.ImageProcessorFactory;
 import eu.balev.davicasa.processors.ImageProcessorFactoryImpl;
+import eu.balev.davicasa.util.FileIdentityComparator;
+import eu.balev.davicasa.util.ImageFileFilter;
 import eu.balev.davicasa.util.ImageFinder;
 import eu.balev.davicasa.util.ImageHashCalculator;
-import eu.balev.davicasa.util.impl.FileIdentityComparator;
-import eu.balev.davicasa.util.impl.ImageFileFilter;
 import eu.balev.davicasa.util.impl.ImageFinderImpl;
 import eu.balev.davicasa.util.impl.ImageHashCalculatorImpl;
 
@@ -40,6 +40,10 @@ public class DavicasaModule extends AbstractModule
 		bind(ImageHashCalculator.class).to(ImageHashCalculatorImpl.class);
 		
 		bindListener(Matchers.any(), new SLF4JTypeListener());
+		
+		//hash algorithm
+        bind(String.class).
+        	annotatedWith(Names.named("imagehashalg")).toInstance("SHA-256");
 	}
 
 }

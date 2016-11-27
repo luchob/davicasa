@@ -16,9 +16,9 @@ import org.slf4j.Logger;
 
 import eu.balev.davicasa.inject.InjectLogger;
 import eu.balev.davicasa.processors.ImageProcessorBase;
+import eu.balev.davicasa.util.FileIdentityComparator;
 import eu.balev.davicasa.util.ImageFinder;
 import eu.balev.davicasa.util.ImageHashCalculator;
-import eu.balev.davicasa.util.impl.FileIdentityComparator;
 
 public class RemoveDuplicatedImagesProcessor extends ImageProcessorBase {
 	
