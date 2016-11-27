@@ -25,3 +25,11 @@ From this folder run:
 <pre>davicasa -help</pre>
 
 This will print a detailed usage message.
+
+#Exploring
+
+The tool can be easily imported and explored in Eclipse. In the source directory run:
+
+<pre>gradlew eclipse</pre>
+
+You may easily import the tool in Eclipse as an existing project then.
