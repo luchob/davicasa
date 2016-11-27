@@ -1,4 +1,4 @@
-package eu.balev.davicasa.processors.inject;
+package eu.balev.davicasa.inject;
 
 import java.lang.reflect.Field;
 

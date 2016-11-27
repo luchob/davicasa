@@ -16,10 +16,10 @@ import com.google.inject.Injector;
 import com.google.inject.matcher.Matchers;
 import com.google.inject.name.Names;
 
+import eu.balev.davicasa.inject.SLF4JTypeListener;
 import eu.balev.davicasa.processors.ImageProcessor;
 import eu.balev.davicasa.processors.ImageProcessorFactoryImpl;
 import eu.balev.davicasa.processors.copyrename.CopyAndRenameImageProcessor;
-import eu.balev.davicasa.processors.inject.SLF4JTypeListener;
 import eu.balev.davicasa.processors.removeduplicates.RemoveDuplicatedImagesProcessor;
 import eu.balev.davicasa.util.impl.FileIdentityComparator;
 import eu.balev.davicasa.util.impl.ImageFileFilter;

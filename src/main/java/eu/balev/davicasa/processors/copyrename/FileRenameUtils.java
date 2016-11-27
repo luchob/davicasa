@@ -21,7 +21,7 @@ import javax.inject.Named;
 
 import org.slf4j.Logger;
 
-import eu.balev.davicasa.processors.inject.InjectLogger;
+import eu.balev.davicasa.inject.InjectLogger;
 import eu.balev.davicasa.util.MD5Calculator;
 
 public class FileRenameUtils

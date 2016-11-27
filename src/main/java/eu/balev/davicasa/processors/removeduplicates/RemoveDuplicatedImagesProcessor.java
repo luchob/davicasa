@@ -14,8 +14,8 @@ import javax.inject.Inject;
 
 import org.slf4j.Logger;
 
+import eu.balev.davicasa.inject.InjectLogger;
 import eu.balev.davicasa.processors.ImageProcessorBase;
-import eu.balev.davicasa.processors.inject.InjectLogger;
 import eu.balev.davicasa.util.ImageFinder;
 import eu.balev.davicasa.util.MD5Calculator;
 import eu.balev.davicasa.util.impl.FileIdentityComparator;

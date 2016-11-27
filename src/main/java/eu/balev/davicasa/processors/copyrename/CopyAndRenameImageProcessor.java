@@ -14,8 +14,8 @@ import org.slf4j.Logger;
 
 import com.drew.imaging.ImageProcessingException;
 
+import eu.balev.davicasa.inject.InjectLogger;
 import eu.balev.davicasa.processors.ImageProcessorBase;
-import eu.balev.davicasa.processors.inject.InjectLogger;
 import eu.balev.davicasa.util.ImageFinder;
 
 public class CopyAndRenameImageProcessor extends ImageProcessorBase
