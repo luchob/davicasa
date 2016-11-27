@@ -20,8 +20,8 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import eu.balev.davicasa.processors.inject.InjectLogger;
 import eu.balev.davicasa.util.MD5Calculator;
 
 public class FileRenameUtils
@@ -32,8 +32,8 @@ public class FileRenameUtils
 	 * YYYY |----MM |----DD
 	 */
 
-	private static Logger logger = LoggerFactory
-			.getLogger(FileRenameUtils.class);
+	@InjectLogger
+	private Logger logger;
 
 	private File targetDir;
 
@@ -49,15 +49,15 @@ public class FileRenameUtils
 			"yyyyMMdd");
 
 	@Inject
-	MD5Calculator md5Calculator;
+	private MD5Calculator md5Calculator;
 
 	@Inject
 	@Named("ImageFileFilter")
-	FileFilter imageFilter;
+	private FileFilter imageFilter;
 
 	@Inject
 	@Named("FileIdentityComparator")
-	Comparator<File> fileComparator;
+	private Comparator<File> fileComparator;
 
 	/**
 	 * Maintains a cache for free indices. The key in the map is the directory

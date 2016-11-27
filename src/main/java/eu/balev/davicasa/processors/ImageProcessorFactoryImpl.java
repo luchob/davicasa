@@ -1,20 +1,24 @@
 package eu.balev.davicasa.processors;
 
+import static eu.balev.davicasa.processors.CLOptionsEnum.CLEAN_SRC_DUPLICATES;
+import static eu.balev.davicasa.processors.CLOptionsEnum.COPY_RENAME;
+import static eu.balev.davicasa.processors.CLOptionsEnum.DRY_RUN;
+import static eu.balev.davicasa.processors.CLOptionsEnum.SOURCE_DIR;
+import static eu.balev.davicasa.processors.CLOptionsEnum.TARGET_DIR;
+
 import java.io.File;
 
 import org.apache.commons.cli.CommandLine;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import eu.balev.davicasa.processors.copyrename.CopyAndRenameImageProcessor;
+import eu.balev.davicasa.processors.inject.InjectLogger;
 import eu.balev.davicasa.processors.removeduplicates.RemoveDuplicatedImagesProcessor;
-
-import static eu.balev.davicasa.processors.CLOptionsEnum.*;
 
 public class ImageProcessorFactoryImpl implements ImageProcessorFactory
 {
-	private static Logger logger = LoggerFactory
-			.getLogger(ImageProcessorFactoryImpl.class);
+	@InjectLogger
+	private Logger logger;
 
 	@Override
 	public ImageProcessor tryCreateProcessor(CommandLine line)

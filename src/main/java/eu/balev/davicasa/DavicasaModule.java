@@ -6,10 +6,12 @@ import java.util.Comparator;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.TypeLiteral;
+import com.google.inject.matcher.Matchers;
 import com.google.inject.name.Names;
 
 import eu.balev.davicasa.processors.ImageProcessorFactory;
 import eu.balev.davicasa.processors.ImageProcessorFactoryImpl;
+import eu.balev.davicasa.processors.inject.SLF4JTypeListener;
 import eu.balev.davicasa.util.ImageFinder;
 import eu.balev.davicasa.util.MD5Calculator;
 import eu.balev.davicasa.util.impl.FileIdentityComparator;
@@ -37,6 +39,8 @@ public class DavicasaModule extends AbstractModule
 				FileIdentityComparator.class);
 
 		bind(MD5Calculator.class).to(MD5CalculatorImpl.class);
+		
+		bindListener(Matchers.any(), new SLF4JTypeListener());
 	}
 
 }

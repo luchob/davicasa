@@ -4,12 +4,11 @@ import java.io.IOException;
 
 /**
  * Describes a class that is able to process some images based on an initial
- * configuration. Image processors are created from command line options
- * by calling {@link ImageProcessorFactory#tryCreateProcessor(org.apache.commons.cli.CommandLine)}.
+ * configuration.
  */
+@FunctionalInterface
 public interface ImageProcessor
 {
-
 	/**
 	 * Starts the processing of the images.
 	 * 

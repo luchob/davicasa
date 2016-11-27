@@ -11,27 +11,29 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.drew.imaging.ImageProcessingException;
 
 import eu.balev.davicasa.processors.ImageProcessorBase;
+import eu.balev.davicasa.processors.inject.InjectLogger;
 import eu.balev.davicasa.util.ImageFinder;
 
 public class CopyAndRenameImageProcessor extends ImageProcessorBase
 {
-	private final Logger logger = LoggerFactory
-			.getLogger(CopyAndRenameImageProcessor.class);
+	@InjectLogger
+	private Logger logger;
 	
 	private final File targetDir;
 
 	@Inject
 	@Named("ImageFileFilter")
-	FileFilter imageFilter;
+	private FileFilter imageFilter;
 	
-	@Inject ImageFinder imageFinder;
+	@Inject 
+	private ImageFinder imageFinder;
 	
-	@Inject ImageCreateDateExtractor dateExtractor;
+	@Inject 
+	private ImageCreateDateExtractor dateExtractor;
 	
 	@Inject FileRenameUtils fileRenameUtils;
 	

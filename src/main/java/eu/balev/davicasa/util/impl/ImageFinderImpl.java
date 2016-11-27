@@ -11,14 +11,14 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import eu.balev.davicasa.processors.inject.InjectLogger;
 import eu.balev.davicasa.util.ImageFinder;
 
 public class ImageFinderImpl implements ImageFinder
 {
-	private static Logger logger = LoggerFactory
-			.getLogger(ImageFinderImpl.class);
+	@InjectLogger
+	private Logger logger;
 
 	@Inject
 	@Named("ImageFileFilter")

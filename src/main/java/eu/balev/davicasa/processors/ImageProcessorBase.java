@@ -4,11 +4,11 @@ import java.io.File;
 import java.util.Objects;
 
 /**
- * A class that contains some very basic functionality common to all image
- * processors.
+ * A class that contains some very basic functionality common to all included
+ * image processors in the tool.
  */
-public abstract class ImageProcessorBase implements ImageProcessor
-{
+public abstract class ImageProcessorBase implements ImageProcessor {
+	
 	private File sourceDir;
 	private boolean dryRun;
 
@@ -22,8 +22,7 @@ public abstract class ImageProcessorBase implements ImageProcessor
 	 * @throws NullPointerException
 	 *             if the source dir is null.
 	 */
-	public void setSourceDir(File sourceDir)
-	{
+	public void setSourceDir(File sourceDir) {
 		Objects.requireNonNull(sourceDir);
 
 		this.sourceDir = sourceDir;
@@ -36,8 +35,7 @@ public abstract class ImageProcessorBase implements ImageProcessor
 	 * @return the source directory where the sources for the image processor
 	 *         should reside
 	 */
-	public File getSourceDir()
-	{
+	public File getSourceDir() {
 		return sourceDir;
 	}
 
@@ -47,10 +45,9 @@ public abstract class ImageProcessorBase implements ImageProcessor
 	 * anything on disk.
 	 * 
 	 * @param dryRun
-	 *            <code>true<code/> if the processor should make a dry drun.
+	 *            <code>true<code/> if the processor should make a dry run.
 	 */
-	public void setDryRun(boolean dryRun)
-	{
+	public void setDryRun(boolean dryRun) {
 		this.dryRun = dryRun;
 	}
 
@@ -60,8 +57,7 @@ public abstract class ImageProcessorBase implements ImageProcessor
 	 * 
 	 * @return <code>true</code> if the processor should make a dry run.
 	 */
-	public boolean isDryRun()
-	{
+	public boolean isDryRun() {
 		return dryRun;
 	}
 

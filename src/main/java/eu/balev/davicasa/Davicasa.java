@@ -36,7 +36,7 @@ public class Davicasa
 	private static String HELP_FILE_ENCODING = "UTF-8";
 
 	@Inject
-	ImageProcessorFactory factory;
+	private ImageProcessorFactory factory;
 
 	public static void main(String[] args)
 	{

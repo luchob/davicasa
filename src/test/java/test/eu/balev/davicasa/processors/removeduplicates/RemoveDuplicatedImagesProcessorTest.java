@@ -18,8 +18,10 @@ import com.drew.imaging.ImageProcessingException;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.matcher.Matchers;
 import com.google.inject.name.Names;
 
+import eu.balev.davicasa.processors.inject.SLF4JTypeListener;
 import eu.balev.davicasa.processors.removeduplicates.RemoveDuplicatedImagesProcessor;
 import eu.balev.davicasa.util.ImageFinder;
 import eu.balev.davicasa.util.MD5Calculator;
@@ -96,6 +98,7 @@ public class RemoveDuplicatedImagesProcessorTest
 
 			bind(ImageFinder.class).toInstance(new TestImageFinder());
 			bind(MD5Calculator.class).toInstance(new TestMD5Calculator());
+			bindListener(Matchers.any(), new SLF4JTypeListener());
 		}
 
 	}

@@ -8,7 +8,6 @@ import java.util.Comparator;
 import java.util.Date;
 
 import org.junit.Assert;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,9 +19,11 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.TypeLiteral;
+import com.google.inject.matcher.Matchers;
 import com.google.inject.name.Names;
 
 import eu.balev.davicasa.processors.copyrename.FileRenameUtils;
+import eu.balev.davicasa.processors.inject.SLF4JTypeListener;
 import eu.balev.davicasa.util.MD5Calculator;
 import eu.balev.davicasa.util.impl.ImageFileFilter;
 
@@ -175,6 +176,7 @@ public class FileRenameUtilsTest
 							ImageFileFilter.class);
 
 			bind(MD5Calculator.class).to(TestMD5Calculator.class);
+			bindListener(Matchers.any(), new SLF4JTypeListener());
 		}
 	}
 }

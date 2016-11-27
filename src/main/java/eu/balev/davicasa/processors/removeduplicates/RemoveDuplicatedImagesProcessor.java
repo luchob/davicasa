@@ -13,34 +13,32 @@ import java.util.Objects;
 import javax.inject.Inject;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import eu.balev.davicasa.processors.ImageProcessorBase;
-import eu.balev.davicasa.processors.copyrename.CopyAndRenameImageProcessor;
+import eu.balev.davicasa.processors.inject.InjectLogger;
 import eu.balev.davicasa.util.ImageFinder;
 import eu.balev.davicasa.util.MD5Calculator;
 import eu.balev.davicasa.util.impl.FileIdentityComparator;
 
-public class RemoveDuplicatedImagesProcessor extends ImageProcessorBase
-{
-
-	private final Logger logger = LoggerFactory
-			.getLogger(RemoveDuplicatedImagesProcessor.class);
+public class RemoveDuplicatedImagesProcessor extends ImageProcessorBase {
 	
-	@Inject ImageFinder imageFinder;
-	
-	@Inject MD5Calculator md5Calc;
+	@InjectLogger
+	private Logger logger;
 
-	public RemoveDuplicatedImagesProcessor(File sourceDir)
-	{
+	@Inject
+	private ImageFinder imageFinder;
+
+	@Inject
+	private MD5Calculator md5Calc;
+
+	public RemoveDuplicatedImagesProcessor(File sourceDir) {
 		Objects.requireNonNull(sourceDir, "Source dir cannot be null!");
 
 		super.setSourceDir(sourceDir);
 	}
 
 	@Override
-	public void process() throws IOException
-	{
+	public void process() throws IOException {
 		logger.info(
 				"Processing images in source folder {}. The processor will remove identical images. Dry run enabled - {}.",
 				getSourceDir().getAbsolutePath(), isDryRun());
@@ -53,16 +51,12 @@ public class RemoveDuplicatedImagesProcessor extends ImageProcessorBase
 
 		logger.info("Found {} image(s) for processing...", images.size());
 
-		for (File anImage : images)
-		{
+		for (File anImage : images) {
 			String md5Sum = md5Calc.getMD5Sum(anImage);
 
-			if (filesWithSameMD5Sums.containsKey(md5Sum))
-			{
+			if (filesWithSameMD5Sums.containsKey(md5Sum)) {
 				filesWithSameMD5Sums.get(md5Sum).add(anImage);
-			}
-			else
-			{
+			} else {
 				List<File> files = new LinkedList<>();
 				files.add(anImage);
 				filesWithSameMD5Sums.put(md5Sum, files);
@@ -70,23 +64,19 @@ public class RemoveDuplicatedImagesProcessor extends ImageProcessorBase
 
 		}
 
-		if (filesWithSameMD5Sums.size() == images.size())
-		{
+		if (filesWithSameMD5Sums.size() == images.size()) {
 			logger.info("There are no duplicates in the files...");
-		}
-		else
-		{
+		} else {
 			logger.info("Most likely there are duplicates in the processed files. Verifying...");
 
 			for (Map.Entry<String, List<File>> entry : filesWithSameMD5Sums
-					.entrySet())
-			{
+					.entrySet()) {
 				List<File> files = entry.getValue();
-				if (files.size() > 1)
-				{
+				if (files.size() > 1) {
 					List<File> filesCopy = new LinkedList<>();
 					filesCopy.addAll(files);
-					processIdenticalFiles(filesCopy, new FileIdentityComparator());
+					processIdenticalFiles(filesCopy,
+							new FileIdentityComparator());
 				}
 			}
 		}
@@ -97,10 +87,9 @@ public class RemoveDuplicatedImagesProcessor extends ImageProcessorBase
 
 	}
 
-	public void processIdenticalFiles(List<File> files, Comparator<File> fileComparator)
-	{
-		if (files.size() < 2)
-		{
+	public void processIdenticalFiles(List<File> files,
+			Comparator<File> fileComparator) {
+		if (files.size() < 2) {
 			files.clear();
 			return;
 		}
@@ -108,22 +97,20 @@ public class RemoveDuplicatedImagesProcessor extends ImageProcessorBase
 		File firstFile = files.remove(0);
 
 		Iterator<File> filesIter = files.iterator();
-		while (filesIter.hasNext())
-		{
+		while (filesIter.hasNext()) {
 			File aFile = filesIter.next();
 
-			if (fileComparator.compare(firstFile, aFile) == 0)
-			{
+			if (fileComparator.compare(firstFile, aFile) == 0) {
 				logger.info(
 						"The following files are identical {} {}. The last will be removed. Dry run enabled - {}. ",
 						firstFile.getAbsolutePath(), aFile.getAbsolutePath(),
 						isDryRun());
 
-				if (!isDryRun())
-				{
-					if (!aFile.delete())
-					{
-						logger.error("The file {} could not be deleted, perhaps it is locked...", aFile.getAbsolutePath());
+				if (!isDryRun()) {
+					if (!aFile.delete()) {
+						logger.error(
+								"The file {} could not be deleted, perhaps it is locked...",
+								aFile.getAbsolutePath());
 					}
 				}
 
