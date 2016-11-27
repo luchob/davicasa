@@ -14,6 +14,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import test.eu.balev.davicasa.util.impl.TestHashCalculator;
+
 import com.drew.imaging.ImageProcessingException;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
@@ -24,7 +26,7 @@ import com.google.inject.name.Names;
 import eu.balev.davicasa.inject.SLF4JTypeListener;
 import eu.balev.davicasa.processors.removeduplicates.RemoveDuplicatedImagesProcessor;
 import eu.balev.davicasa.util.ImageFinder;
-import eu.balev.davicasa.util.MD5Calculator;
+import eu.balev.davicasa.util.ImageHashCalculator;
 import eu.balev.davicasa.util.impl.ImageFileFilter;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -97,23 +99,12 @@ public class RemoveDuplicatedImagesProcessorTest
 							ImageFileFilter.class);
 
 			bind(ImageFinder.class).toInstance(new TestImageFinder());
-			bind(MD5Calculator.class).toInstance(new TestMD5Calculator());
+			bind(ImageHashCalculator.class).toInstance(new TestHashCalculator());
 			bindListener(Matchers.any(), new SLF4JTypeListener());
 		}
 
 	}
 
-	private class TestMD5Calculator implements MD5Calculator
-	{
-
-		@Override
-		public String getMD5Sum(File file) throws IOException
-		{
-			//just for testting purposes
-			return file.getName();
-		}
-
-	}
 
 	private class TestImageFinder implements ImageFinder
 	{

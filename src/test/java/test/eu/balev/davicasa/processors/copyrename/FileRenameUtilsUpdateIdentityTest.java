@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.util.Comparator;
 
 import org.junit.Assert;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,7 +14,8 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import test.eu.balev.davicasa.processors.TestFileIdentityComparator;
-import test.eu.balev.davicasa.processors.TestMD5Calculator;
+import test.eu.balev.davicasa.util.impl.TestHashCalculator;
+
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -23,7 +23,7 @@ import com.google.inject.TypeLiteral;
 import com.google.inject.name.Names;
 
 import eu.balev.davicasa.processors.copyrename.FileRenameUtils;
-import eu.balev.davicasa.util.MD5Calculator;
+import eu.balev.davicasa.util.ImageHashCalculator;
 import eu.balev.davicasa.util.impl.ImageFileFilter;
 
 /**
@@ -161,7 +161,7 @@ public class FileRenameUtilsUpdateIdentityTest
 					.annotatedWith(Names.named("ImageFileFilter")).to(
 							ImageFileFilter.class);
 
-			bind(MD5Calculator.class).to(TestMD5Calculator.class);
+			bind(ImageHashCalculator.class).to(TestHashCalculator.class);
 		}
 	}
 }

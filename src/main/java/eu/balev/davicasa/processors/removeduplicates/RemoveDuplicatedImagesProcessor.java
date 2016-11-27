@@ -17,7 +17,7 @@ import org.slf4j.Logger;
 import eu.balev.davicasa.inject.InjectLogger;
 import eu.balev.davicasa.processors.ImageProcessorBase;
 import eu.balev.davicasa.util.ImageFinder;
-import eu.balev.davicasa.util.MD5Calculator;
+import eu.balev.davicasa.util.ImageHashCalculator;
 import eu.balev.davicasa.util.impl.FileIdentityComparator;
 
 public class RemoveDuplicatedImagesProcessor extends ImageProcessorBase {
@@ -29,7 +29,7 @@ public class RemoveDuplicatedImagesProcessor extends ImageProcessorBase {
 	private ImageFinder imageFinder;
 
 	@Inject
-	private MD5Calculator md5Calc;
+	private ImageHashCalculator hashCalc;
 
 	public RemoveDuplicatedImagesProcessor(File sourceDir) {
 		Objects.requireNonNull(sourceDir, "Source dir cannot be null!");
@@ -45,31 +45,31 @@ public class RemoveDuplicatedImagesProcessor extends ImageProcessorBase {
 
 		long start = System.currentTimeMillis();
 
-		Map<String, List<File>> filesWithSameMD5Sums = new HashMap<>();
+		Map<String, List<File>> filesWithSameHashSums = new HashMap<>();
 
 		List<File> images = imageFinder.listImages(getSourceDir());
 
 		logger.info("Found {} image(s) for processing...", images.size());
 
 		for (File anImage : images) {
-			String md5Sum = md5Calc.getMD5Sum(anImage);
+			String hashSum = hashCalc.getHashSum(anImage);
 
-			if (filesWithSameMD5Sums.containsKey(md5Sum)) {
-				filesWithSameMD5Sums.get(md5Sum).add(anImage);
+			if (filesWithSameHashSums.containsKey(hashSum)) {
+				filesWithSameHashSums.get(hashSum).add(anImage);
 			} else {
 				List<File> files = new LinkedList<>();
 				files.add(anImage);
-				filesWithSameMD5Sums.put(md5Sum, files);
+				filesWithSameHashSums.put(hashSum, files);
 			}
 
 		}
 
-		if (filesWithSameMD5Sums.size() == images.size()) {
+		if (filesWithSameHashSums.size() == images.size()) {
 			logger.info("There are no duplicates in the files...");
 		} else {
 			logger.info("Most likely there are duplicates in the processed files. Verifying...");
 
-			for (Map.Entry<String, List<File>> entry : filesWithSameMD5Sums
+			for (Map.Entry<String, List<File>> entry : filesWithSameHashSums
 					.entrySet()) {
 				List<File> files = entry.getValue();
 				if (files.size() > 1) {

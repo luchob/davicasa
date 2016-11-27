@@ -13,7 +13,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import test.eu.balev.davicasa.processors.TestFileIdentityComparator;
-import test.eu.balev.davicasa.processors.TestMD5Calculator;
+import test.eu.balev.davicasa.util.impl.TestHashCalculator;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
@@ -24,7 +24,7 @@ import com.google.inject.name.Names;
 
 import eu.balev.davicasa.inject.SLF4JTypeListener;
 import eu.balev.davicasa.processors.copyrename.FileRenameUtils;
-import eu.balev.davicasa.util.MD5Calculator;
+import eu.balev.davicasa.util.ImageHashCalculator;
 import eu.balev.davicasa.util.impl.ImageFileFilter;
 
 public class FileRenameUtilsTest
@@ -175,7 +175,7 @@ public class FileRenameUtilsTest
 					.annotatedWith(Names.named("ImageFileFilter")).to(
 							ImageFileFilter.class);
 
-			bind(MD5Calculator.class).to(TestMD5Calculator.class);
+			bind(ImageHashCalculator.class).to(TestHashCalculator.class);
 			bindListener(Matchers.any(), new SLF4JTypeListener());
 		}
 	}

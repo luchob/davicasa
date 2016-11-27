@@ -22,7 +22,7 @@ import javax.inject.Named;
 import org.slf4j.Logger;
 
 import eu.balev.davicasa.inject.InjectLogger;
-import eu.balev.davicasa.util.MD5Calculator;
+import eu.balev.davicasa.util.ImageHashCalculator;
 
 public class FileRenameUtils
 {
@@ -49,7 +49,7 @@ public class FileRenameUtils
 			"yyyyMMdd");
 
 	@Inject
-	private MD5Calculator md5Calculator;
+	private ImageHashCalculator hashCalculator;
 
 	@Inject
 	@Named("ImageFileFilter")
@@ -153,13 +153,13 @@ public class FileRenameUtils
 			targetFilesCache.put(targetDir, cache);
 		}
 
-		String md5 = md5Calculator.getMD5Sum(targetFile);
+		String hash = hashCalculator.getHashSum(targetFile);
 
-		if (cache.containsKey(md5))
+		if (cache.containsKey(hash))
 		{
-			// the cache has such md5 sum, meaning that the
+			// the cache has such hash sum, meaning that the
 			// target dir most likely contains a duplicate
-			List<File> existingFiles = cache.get(md5);
+			List<File> existingFiles = cache.get(hash);
 			if (existingFiles.isEmpty())
 			{
 				existingFiles.add(targetFile);
@@ -183,9 +183,9 @@ public class FileRenameUtils
 		}
 		else
 		{
-			List<File> filesForMD5 = new LinkedList<>();
-			filesForMD5.add(targetFile);
-			cache.put(md5, filesForMD5);
+			List<File> filesForHash = new LinkedList<>();
+			filesForHash.add(targetFile);
+			cache.put(hash, filesForHash);
 		}
 
 		return null;
@@ -201,13 +201,13 @@ public class FileRenameUtils
 		{
 			for (File existingFile : existingFiles)
 			{
-				String md5 = md5Calculator.getMD5Sum(existingFile);
+				String hash = hashCalculator.getHashSum(existingFile);
 
-				List<File> files = cache.get(md5);
+				List<File> files = cache.get(hash);
 				if (files == null)
 				{
 					files = new LinkedList<>();
-					cache.put(md5, files);
+					cache.put(hash, files);
 				}
 				files.add(existingFile);
 			}

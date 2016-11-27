@@ -12,11 +12,11 @@ import com.google.inject.name.Names;
 import eu.balev.davicasa.processors.ImageProcessorFactory;
 import eu.balev.davicasa.processors.ImageProcessorFactoryImpl;
 import eu.balev.davicasa.util.ImageFinder;
-import eu.balev.davicasa.util.MD5Calculator;
+import eu.balev.davicasa.util.ImageHashCalculator;
 import eu.balev.davicasa.util.impl.FileIdentityComparator;
 import eu.balev.davicasa.util.impl.ImageFileFilter;
 import eu.balev.davicasa.util.impl.ImageFinderImpl;
-import eu.balev.davicasa.util.impl.MD5CalculatorImpl;
+import eu.balev.davicasa.util.impl.ImageHashCalculatorImpl;
 
 /**
  * A Guice module for the DaViCasa tool.
@@ -37,7 +37,7 @@ public class DavicasaModule extends AbstractModule
 		}).annotatedWith(Names.named("FileIdentityComparator")).to(
 				FileIdentityComparator.class);
 
-		bind(MD5Calculator.class).to(MD5CalculatorImpl.class);
+		bind(ImageHashCalculator.class).to(ImageHashCalculatorImpl.class);
 		
 		bindListener(Matchers.any(), new SLF4JTypeListener());
 	}

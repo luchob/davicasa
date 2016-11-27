@@ -8,23 +8,23 @@ import java.security.NoSuchAlgorithmException;
 
 import org.apache.commons.codec.binary.Hex;
 
-import eu.balev.davicasa.util.MD5Calculator;
+import eu.balev.davicasa.util.ImageHashCalculator;
 
-public class MD5CalculatorImpl implements MD5Calculator
+public class ImageHashCalculatorImpl implements ImageHashCalculator
 {
 
 	@Override
-	public String getMD5Sum(File file) throws IOException
+	public String getHashSum(File file) throws IOException
 	{
 		MessageDigest messageDigest = null;
 		try
 		{
-			messageDigest = MessageDigest.getInstance("MD5");
+			messageDigest = MessageDigest.getInstance("SHA-256");
 		}
 		catch (NoSuchAlgorithmException ex)
 		{
 			throw new RuntimeException(
-					"Unable to find MD5 implementation. The processor requires MD5 for file searches",
+					"Unable to find SHA-256 implementation. The processor requires SHA-256 for file comparison",
 					ex);
 		}
 
@@ -38,9 +38,9 @@ public class MD5CalculatorImpl implements MD5Calculator
 			}
 		}
 
-		byte[] md5Bytes = messageDigest.digest();
+		byte[] bytes = messageDigest.digest();
 
-		return Hex.encodeHexString(md5Bytes);
+		return Hex.encodeHexString(bytes);
 	}
 
 }
