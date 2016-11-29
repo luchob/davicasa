@@ -1,4 +1,4 @@
-package test.eu.balev.davicasa.processors.copyrename;
+package eu.balev.davicasa.processors.copyrename;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -13,18 +13,17 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import test.eu.balev.davicasa.processors.TestFileIdentityComparator;
-import test.eu.balev.davicasa.util.TestHashCalculator;
-
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.TypeLiteral;
 import com.google.inject.name.Names;
 
+import eu.balev.davicasa.processors.TestFileIdentityComparator;
 import eu.balev.davicasa.processors.copyrename.FileRenameUtils;
 import eu.balev.davicasa.util.ImageFileFilter;
 import eu.balev.davicasa.util.ImageHashCalculator;
+import eu.balev.davicasa.util.TestHashCalculator;
 
 /**
  * Tests the behavior of the

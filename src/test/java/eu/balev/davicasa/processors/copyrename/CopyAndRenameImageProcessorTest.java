@@ -1,4 +1,4 @@
-package test.eu.balev.davicasa.processors.copyrename;
+package eu.balev.davicasa.processors.copyrename;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -14,8 +14,6 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
-
-import test.eu.balev.davicasa.util.TestHashCalculator;
 
 import com.drew.imaging.ImageProcessingException;
 import com.google.inject.AbstractModule;
@@ -33,6 +31,7 @@ import eu.balev.davicasa.util.FileIdentityComparator;
 import eu.balev.davicasa.util.ImageFileFilter;
 import eu.balev.davicasa.util.ImageFinder;
 import eu.balev.davicasa.util.ImageHashCalculator;
+import eu.balev.davicasa.util.TestHashCalculator;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CopyAndRenameImageProcessorTest

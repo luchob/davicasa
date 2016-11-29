@@ -1,4 +1,4 @@
-package test.eu.balev.davicasa;
+package eu.balev.davicasa;
 
 import java.io.IOException;
 import org.apache.commons.cli.CommandLine;

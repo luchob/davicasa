@@ -1,4 +1,4 @@
-package test.eu.balev.davicasa.processors.copyrename;
+package eu.balev.davicasa.processors.copyrename;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -12,9 +12,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import test.eu.balev.davicasa.processors.TestFileIdentityComparator;
-import test.eu.balev.davicasa.util.TestHashCalculator;
-
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -23,9 +20,11 @@ import com.google.inject.matcher.Matchers;
 import com.google.inject.name.Names;
 
 import eu.balev.davicasa.inject.SLF4JTypeListener;
+import eu.balev.davicasa.processors.TestFileIdentityComparator;
 import eu.balev.davicasa.processors.copyrename.FileRenameUtils;
 import eu.balev.davicasa.util.ImageFileFilter;
 import eu.balev.davicasa.util.ImageHashCalculator;
+import eu.balev.davicasa.util.TestHashCalculator;
 
 public class FileRenameUtilsTest
 {

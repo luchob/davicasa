@@ -1,4 +1,4 @@
-package test.eu.balev.davicasa.processors;
+package eu.balev.davicasa.processors;
 
 import java.io.File;
 import java.util.Comparator;

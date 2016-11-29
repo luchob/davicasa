@@ -1,4 +1,4 @@
-package test.eu.balev.davicasa.util;
+package eu.balev.davicasa.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
