@@ -10,8 +10,6 @@ import javax.inject.Inject;
 
 import org.slf4j.Logger;
 
-import com.drew.imaging.ImageProcessingException;
-
 import eu.balev.davicasa.inject.InjectLogger;
 import eu.balev.davicasa.processors.ImageProcessorBase;
 import eu.balev.davicasa.util.ImageFinder;
@@ -29,7 +27,8 @@ public class CopyAndRenameImageProcessor extends ImageProcessorBase
 	@Inject 
 	private ImageCreateDateExtractor dateExtractor;
 	
-	@Inject FileRenameUtils fileRenameUtils;
+	@Inject 
+	private FileRenameUtils fileRenameUtils;
 	
 	public CopyAndRenameImageProcessor(File sourceDir, File targetDir)
 	{
@@ -61,19 +60,7 @@ public class CopyAndRenameImageProcessor extends ImageProcessorBase
 
 		for (File anImage : images)
 		{
-			Date imageDate = null;
-			try
-			{
-				imageDate = dateExtractor.getImageDate(anImage);
-			}
-			catch (ImageProcessingException e)
-			{
-
-				logger.error(
-						"Unable to read the metadata from image {}. Skipping... Reason: ",
-						anImage, e);
-				continue;
-			}
+			Date imageDate = dateExtractor.getImageDate(anImage);
 
 			if (imageDate != null)
 			{

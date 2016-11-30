@@ -39,15 +39,6 @@ public class FileRenameUtils
 
 	private boolean dryRun;
 
-	private static final DateFormat YEAR_FORMAT = new SimpleDateFormat("yyyy");
-
-	private static final DateFormat MONTH_FORMAT = new SimpleDateFormat("MM");
-
-	private static final DateFormat DAY_FORMAT = new SimpleDateFormat("dd");
-
-	private static final DateFormat IMAGE_NAME_FORMAT = new SimpleDateFormat(
-			"yyyyMMdd");
-
 	@Inject
 	private ImageHashCalculator hashCalculator;
 
@@ -57,7 +48,10 @@ public class FileRenameUtils
 
 	@Inject
 	@Named("FileIdentityComparator")
-	private Comparator<File> fileComparator;
+	private Comparator<File> fileComparator;//todo - check istantiation of the comparator
+	
+	@Inject
+	private FileNamingUtils fileNamingUtils;
 
 	/**
 	 * Maintains a cache for free indices. The key in the map is the directory
@@ -66,37 +60,7 @@ public class FileRenameUtils
 	private Map<File, Integer> indexCache = new HashMap<>();
 
 	private Map<File, Map<String, List<File>>> targetFilesCache = new HashMap<>();
-
-	/**
-	 * Returns the image directory where the image should be saved.
-	 * 
-	 * @param imageDate
-	 *            the date when the image was shot
-	 * 
-	 * @return the path where the image must be saved
-	 * 
-	 * @throws java.lang.NullPointerException
-	 *             if image date is null
-	 */
-	public File getImageDir(Date imageDate)
-	{
-		Objects.requireNonNull(imageDate, "The image date cannot be null!");
-
-		File ret = new File(targetDir, YEAR_FORMAT.format(imageDate));
-
-		ret = new File(ret, MONTH_FORMAT.format(imageDate));
-		ret = new File(ret, DAY_FORMAT.format(imageDate));
-
-		return ret;
-	}
-
-	public String getImageFileName(Date imageDate, int index, String ext)
-	{
-		String idx = String.format("%1$05d", index);
-
-		return IMAGE_NAME_FORMAT.format(imageDate) + "_" + idx + "." + ext;
-	}
-
+	
 	public void setDryRun(boolean dryRun)
 	{
 		this.dryRun = dryRun;
@@ -104,21 +68,27 @@ public class FileRenameUtils
 
 	public File processImageFile(File aFile, Date imageDate) throws IOException
 	{
-		File targetDir = getImageDir(imageDate);
+		File imageTargetDir = fileNamingUtils.getImageDir(targetDir, imageDate);
 
-		if (!checkImageDir(targetDir))
+		if (!checkImageDir(imageTargetDir))
 		{
 			return null;
 		}
 
-		File duplicate = checkAndUpdateIdentity(targetDir, aFile);
+		File duplicate = checkAndUpdateIdentity(imageTargetDir, aFile);
 
 		if (duplicate == null)
 		{
-			String ext = getFileExtension(aFile);
+			String ext = fileNamingUtils.getFileExtension(aFile);
+			if (ext == null)
+			{
+				logger.error("Unable to process file [{}] because it has no extension, e.g. .jpg .gif, etc...", 
+						aFile.getAbsolutePath());
+				return null;
+			}
 			Integer index = getAndUpdateFreeIndex(imageDate, ext);
 
-			File targetFile = new File(targetDir, getImageFileName(imageDate,
+			File targetFile = new File(imageTargetDir, fileNamingUtils.getImageFileName(imageDate,
 					index, ext));
 
 			if (!dryRun)
@@ -267,25 +237,10 @@ public class FileRenameUtils
 
 		return ret;
 	}
-
-	public String getFileExtension(File aFile)
-	{
-		String fileName = aFile.getName();
-		int extIdx = fileName.lastIndexOf(".");
-
-		if (extIdx == -1)
-		{
-			return null;
-		}
-		else
-		{
-			return fileName.substring(extIdx + 1, fileName.length());
-		}
-	}
-
+	
 	public int getAndUpdateFreeIndex(Date imageDate, String ext)
 	{
-		File imageDir = getImageDir(imageDate);
+		File imageDir = fileNamingUtils.getImageDir(targetDir, imageDate);
 
 		Integer freeIdx = indexCache.get(imageDir);
 		if (freeIdx == null)
@@ -297,7 +252,7 @@ public class FileRenameUtils
 		{
 			while (true)
 			{
-				File targetFile = new File(imageDir, getImageFileName(
+				File targetFile = new File(imageDir, fileNamingUtils.getImageFileName(
 						imageDate, freeIdx, ext));
 				if (!targetFile.exists())
 				{
