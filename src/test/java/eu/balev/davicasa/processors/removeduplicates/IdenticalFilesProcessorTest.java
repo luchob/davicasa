@@ -6,15 +6,21 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.slf4j.LoggerFactory;
 
 import com.drew.imaging.ImageProcessingException;
+import com.google.inject.AbstractModule;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.matcher.Matchers;
+
+import eu.balev.davicasa.inject.SLF4JTypeListener;
 
 @RunWith(MockitoJUnitRunner.class)
 public class IdenticalFilesProcessorTest
@@ -29,8 +35,12 @@ public class IdenticalFilesProcessorTest
 	@Before
 	public void setUp() throws IOException, ImageProcessingException
 	{
-		processorToTestNoDryRun = new IdenticalFilesProcessor(LoggerFactory.getLogger(IdenticalFilesProcessorTest.class), false);
-		processorToTestDryRun = new IdenticalFilesProcessor(LoggerFactory.getLogger(IdenticalFilesProcessorTest.class), true);
+		processorToTestNoDryRun = new IdenticalFilesProcessor(false);
+		processorToTestDryRun = new IdenticalFilesProcessor(true);
+		
+		Injector injector = Guice.createInjector(new DavicasaTestModule());
+		injector.injectMembers(processorToTestNoDryRun);
+		injector.injectMembers(processorToTestDryRun);		
 	}
 	
 	@Test
@@ -50,10 +60,12 @@ public class IdenticalFilesProcessorTest
 		List<File> oneFileInAList = new LinkedList<File>();
 		oneFileInAList.add(mockFile1);
 
-		processor.processIdenticalObject(oneFileInAList,
+		processor.processIdenticalObjects(oneFileInAList,
 				testComparator);
 
 		Mockito.verify(mockFile1, Mockito.times(0)).delete();
+		
+		Assert.assertEquals(1, oneFileInAList.size());
 	}
 	
 	@Test
@@ -74,9 +86,10 @@ public class IdenticalFilesProcessorTest
 		filesInAList.add(mockFile1);
 		filesInAList.add(mockFile1);
 
-		processor.processIdenticalObject(filesInAList, testComparator);
+		processor.processIdenticalObjects(filesInAList, testComparator);
 
 		Mockito.verify(mockFile1, Mockito.times(isDryRun(processor) ? 0: 1)).delete();
+		Assert.assertEquals(2, filesInAList.size());
 	}
 	
 	@Test
@@ -98,14 +111,26 @@ public class IdenticalFilesProcessorTest
 		filesInAList.add(mockFile1);
 		filesInAList.add(mockFile2);
 
-		processor.processIdenticalObject(filesInAList, testComparator);
+		processor.processIdenticalObjects(filesInAList, testComparator);
 
 		Mockito.verify(mockFile1, Mockito.times(isDryRun(processor) ? 0 : 1)).delete();
 		Mockito.verify(mockFile2, Mockito.times(0)).delete();
+		
+		Assert.assertEquals(3, filesInAList.size());
 	}
 	
 	private boolean isDryRun(IdenticalFilesProcessor processor)
 	{
 		return processor == processorToTestDryRun;
+	}
+	
+	private static class DavicasaTestModule extends AbstractModule
+	{
+
+		@Override
+		protected void configure()
+		{
+			bindListener(Matchers.any(), new SLF4JTypeListener());
+		}
 	}
 }

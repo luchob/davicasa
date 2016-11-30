@@ -6,11 +6,15 @@ import java.util.Comparator;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.TypeLiteral;
+import com.google.inject.assistedinject.FactoryModuleBuilder;
 import com.google.inject.matcher.Matchers;
 import com.google.inject.name.Names;
 
 import eu.balev.davicasa.processors.ImageProcessorFactory;
 import eu.balev.davicasa.processors.ImageProcessorFactoryImpl;
+import eu.balev.davicasa.processors.removeduplicates.IdenticalFilesProcessor;
+import eu.balev.davicasa.processors.removeduplicates.IdenticalFilesProcessorFactory;
+import eu.balev.davicasa.processors.removeduplicates.IdenticalObjectsProcessor;
 import eu.balev.davicasa.util.FileIdentityComparator;
 import eu.balev.davicasa.util.ImageFileFilter;
 import eu.balev.davicasa.util.ImageFinder;
@@ -44,6 +48,10 @@ public class DavicasaModule extends AbstractModule
 		//hash algorithm
         bind(String.class).
         	annotatedWith(Names.named("imagehashalg")).toInstance("SHA-256");
+        
+        install(new FactoryModuleBuilder().implement(
+        		new TypeLiteral<IdenticalObjectsProcessor<File>>(){}, IdenticalFilesProcessor.class)
+                .build(IdenticalFilesProcessorFactory.class));
 	}
 
 }

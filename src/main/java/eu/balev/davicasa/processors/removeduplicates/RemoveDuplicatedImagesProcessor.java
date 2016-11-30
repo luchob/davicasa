@@ -2,7 +2,6 @@ package eu.balev.davicasa.processors.removeduplicates;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -20,6 +19,9 @@ import eu.balev.davicasa.util.FileIdentityComparator;
 import eu.balev.davicasa.util.ImageFinder;
 import eu.balev.davicasa.util.ImageHashCalculator;
 
+/**
+ * Removes duplicated images within a source directory.
+ */
 public class RemoveDuplicatedImagesProcessor extends ImageProcessorBase
 {
 	@InjectLogger
@@ -30,6 +32,9 @@ public class RemoveDuplicatedImagesProcessor extends ImageProcessorBase
 
 	@Inject
 	private ImageHashCalculator hashCalc;
+	
+	@Inject 
+	private IdenticalFilesProcessorFactory identicalFileProcessorFactory;
 
 	public RemoveDuplicatedImagesProcessor(File sourceDir)
 	{
@@ -47,28 +52,11 @@ public class RemoveDuplicatedImagesProcessor extends ImageProcessorBase
 
 		long start = System.currentTimeMillis();
 
-		Map<String, List<File>> filesWithSameHashSums = new HashMap<>();
-
 		List<File> images = imageFinder.listImages(getSourceDir());
 
 		logger.info("Found {} image(s) for processing...", images.size());
 
-		for (File anImage : images)
-		{
-			String hashSum = hashCalc.getHashSum(anImage);
-
-			if (filesWithSameHashSums.containsKey(hashSum))
-			{
-				filesWithSameHashSums.get(hashSum).add(anImage);
-			}
-			else
-			{
-				List<File> files = new LinkedList<>();
-				files.add(anImage);
-				filesWithSameHashSums.put(hashSum, files);
-			}
-
-		}
+		Map<String, List<File>> filesWithSameHashSums = groupImagesByHashSum(images);
 
 		if (filesWithSameHashSums.size() == images.size())
 		{
@@ -78,18 +66,11 @@ public class RemoveDuplicatedImagesProcessor extends ImageProcessorBase
 		{
 			logger.info("Most likely there are duplicates in the processed files. Verifying...");
 
-			for (Map.Entry<String, List<File>> entry : filesWithSameHashSums
-					.entrySet())
-			{
-				List<File> files = entry.getValue();
-				if (files.size() > 1)
-				{
-					List<File> filesCopy = new LinkedList<>();
-					filesCopy.addAll(files);
-					processIdenticalFiles(filesCopy,
-							new FileIdentityComparator());
-				}
-			}
+			filesWithSameHashSums.
+					values().
+					stream().
+					filter(files -> files.size() > 1).
+					forEach(this::processIdenticalFiles);
 		}
 
 		logger.info(
@@ -97,9 +78,21 @@ public class RemoveDuplicatedImagesProcessor extends ImageProcessorBase
 				images.size(), System.currentTimeMillis() - start);
 
 	}
+	
+	private Map<String, List<File>> groupImagesByHashSum(List<File> images) throws IOException
+	{
+		//no lambdas because of IO handling :-)
+		Map<String, List<File>> filesWithSameHashSums = new HashMap<>();
+		for (File anImage : images)
+		{
+			filesWithSameHashSums.
+				computeIfAbsent(hashCalc.getHashSum(anImage), 
+						k->new LinkedList<>()).add(anImage);
+		}
+		return filesWithSameHashSums;
+	}
 
-	public void processIdenticalFiles(List<File> files,
-			Comparator<File> fileComparator)
+	private void processIdenticalFiles(List<File> files)
 	{
 
 		logger.info(
@@ -107,9 +100,8 @@ public class RemoveDuplicatedImagesProcessor extends ImageProcessorBase
 				files.stream().map(f -> f.getAbsolutePath())
 						.collect(Collectors.joining(", ")));
 
-		IdenticalFilesProcessor filesProcessor = new IdenticalFilesProcessor(
-				logger, isDryRun());
-
-		filesProcessor.processIdenticalObject(files, fileComparator);
+		identicalFileProcessorFactory.
+				create(isDryRun()).
+				processIdenticalObjects(files, new FileIdentityComparator());
 	}
 }

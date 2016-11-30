@@ -17,17 +17,18 @@ import java.util.List;
  * and the {@link IdenticalObjectsProcessor#reduce(Object)} in case that only a
  * unique object is found in the provided list.
  */
-abstract class IdenticalObjectsProcessor<T>
+public abstract class IdenticalObjectsProcessor<T>
 {
 	/**
-	 * Processes the identical objects in the provided list.
+	 * Processes the identical objects in the provided list. The list will not
+	 * be mutated.
 	 * 
 	 * @param objectsList
 	 *            the list of objects
 	 * @param objectsComparator
 	 *            a comparator which is able to identify identical objects
 	 */
-	void processIdenticalObject(List<T> objectsList,
+	void processIdenticalObjects(List<T> objectsList,
 			Comparator<T> objectsComparator)
 	{
 		List<T> objectsListCopy = new LinkedList<>(objectsList);
@@ -55,7 +56,7 @@ abstract class IdenticalObjectsProcessor<T>
 
 	/**
 	 * Processes a list of object(s) which are identified as unique.
-	 *  
+	 * 
 	 * @param identicalObjects
 	 */
 	private void processIdenticals(List<T> identicalObjects)
@@ -76,10 +77,12 @@ abstract class IdenticalObjectsProcessor<T>
 	}
 
 	/**
-	 * Reduces two identical objects to one. For example one may be deleted.  
+	 * Reduces two identical objects to one. For example one may be deleted.
 	 * 
-	 * @param first the first of the two identical objects
-	 * @param second the second of the two identical objects
+	 * @param first
+	 *            the first of the two identical objects
+	 * @param second
+	 *            the second of the two identical objects
 	 * 
 	 * @return a reduced object
 	 */
@@ -88,7 +91,8 @@ abstract class IdenticalObjectsProcessor<T>
 	/**
 	 * Processes a unique object - one for which no duplicate had been found.
 	 * 
-	 * @param object the unique object
+	 * @param object
+	 *            the unique object
 	 */
 	protected abstract void unique(T object);
 }

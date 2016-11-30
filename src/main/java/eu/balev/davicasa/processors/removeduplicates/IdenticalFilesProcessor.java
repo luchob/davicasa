@@ -1,20 +1,30 @@
 package eu.balev.davicasa.processors.removeduplicates;
 
 import java.io.File;
+import java.util.Objects;
+
+import javax.inject.Inject;
 
 import org.slf4j.Logger;
+
+import com.google.inject.assistedinject.Assisted;
+
+import eu.balev.davicasa.inject.InjectLogger;
 
 /**
  * Processes a list with identical files.
  */
-class IdenticalFilesProcessor extends IdenticalObjectsProcessor<File>
+public class IdenticalFilesProcessor extends IdenticalObjectsProcessor<File>
 {
-	private final Logger logger;
+	@InjectLogger
+	private Logger logger;
+	
 	private final boolean dryRun;
 
-	IdenticalFilesProcessor(Logger logger, boolean dryRun)
+	@Inject
+	IdenticalFilesProcessor(@Assisted Boolean dryRun)
 	{
-		this.logger = logger;
+		Objects.requireNonNull(dryRun, "Please provide a value for the dry run option...");
 		this.dryRun = dryRun;
 	}
 
