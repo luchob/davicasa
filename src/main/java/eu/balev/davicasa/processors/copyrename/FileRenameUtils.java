@@ -2,9 +2,8 @@ package eu.balev.davicasa.processors.copyrename;
 
 import java.io.File;
 import java.io.FileFilter;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -46,7 +45,7 @@ public class FileRenameUtils
 
 	@Inject
 	@Named("FileIdentityComparator")
-	private Comparator<File> fileComparator;//todo - check istantiation of the comparator
+	private Comparator<File> fileComparator;
 	
 	@Inject
 	private FileNamingUtils fileNamingUtils;
@@ -91,7 +90,7 @@ public class FileRenameUtils
 
 			if (!dryRun)
 			{
-				copyFile(aFile, targetFile);
+				Files.copy(aFile.toPath(), targetFile.toPath());
 			}
 
 			logger.info("Copied {} to {}. Dry run enabled - {}.",
@@ -181,22 +180,6 @@ public class FileRenameUtils
 			}
 		}
 		return cache;
-	}
-
-	private void copyFile(File src, File target) throws IOException
-	{
-		byte[] buffer = new byte[8192];
-		try (FileInputStream fis = new FileInputStream(src);
-				FileOutputStream fos = new FileOutputStream(target))
-		{
-			int read = 0;
-			while ((read = fis.read(buffer)) != -1)
-			{
-				fos.write(buffer, 0, read);
-			}
-
-			fos.flush();
-		}
 	}
 
 	private boolean checkImageDir(File imageDir)
