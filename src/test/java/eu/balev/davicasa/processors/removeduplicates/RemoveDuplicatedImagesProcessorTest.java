@@ -11,7 +11,6 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -19,10 +18,11 @@ import org.mockito.runners.MockitoJUnitRunner;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.TypeLiteral;
 import com.google.inject.matcher.Matchers;
+import com.google.inject.name.Names;
 
 import eu.balev.davicasa.inject.SLF4JTypeListener;
-import eu.balev.davicasa.util.FileIdentityComparator;
 import eu.balev.davicasa.util.ImageFinder;
 import eu.balev.davicasa.util.ImageHashCalculator;
 
@@ -48,6 +48,8 @@ public class RemoveDuplicatedImagesProcessorTest
 
 	@Mock
 	private File mockFile1, mockFile2;
+
+	private Comparator<File> testComparator = (f1, f2) -> f1 == f2 ? 0 : -1;
 
 	@Before
 	public void setUp() throws IOException
@@ -78,22 +80,16 @@ public class RemoveDuplicatedImagesProcessorTest
 	@Test
 	public void testIdenticals() throws IOException
 	{
-		List<File> files = Arrays.asList(mockFile1, mockFile1, mockFile1, mockFile2);
+		List<File> files = Arrays.asList(mockFile1, mockFile1, mockFile1,
+				mockFile2);
 		when(mockImageFinder.listImages(mockSourceDir)).thenReturn(files);
 
 		processorToTest.process();
 
 		Mockito.verify(identicalObjectsProcessor, Mockito.times(1))
-				.processIdenticalObjects(Mockito.eq(Arrays.asList(mockFile1, mockFile1, mockFile1)),
-						Mockito.argThat(new ArgumentMatcher<Comparator<File>>()
-						{
-							@Override
-							public boolean matches(Object argument)
-							{
-								return FileIdentityComparator.class == argument
-										.getClass();
-							}
-						}));
+				.processIdenticalObjects(
+						Arrays.asList(mockFile1, mockFile1, mockFile1),
+						testComparator);
 	}
 
 	private class DavicasaTestModule extends AbstractModule
@@ -106,6 +102,11 @@ public class RemoveDuplicatedImagesProcessorTest
 			bind(IdenticalFilesProcessorFactory.class).toInstance(
 					mockIdenticalFileProcessorFactory);
 			bindListener(Matchers.any(), new SLF4JTypeListener());
+			bind(new TypeLiteral<Comparator<File>>()
+			{
+			}).annotatedWith(Names.named("FileIdentityComparator")).toInstance(
+					testComparator);
+
 		}
 	}
 }

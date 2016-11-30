@@ -2,6 +2,7 @@ package eu.balev.davicasa.processors.removeduplicates;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -10,12 +11,12 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.slf4j.Logger;
 
 import eu.balev.davicasa.inject.InjectLogger;
 import eu.balev.davicasa.processors.ImageProcessorBase;
-import eu.balev.davicasa.util.FileIdentityComparator;
 import eu.balev.davicasa.util.ImageFinder;
 import eu.balev.davicasa.util.ImageHashCalculator;
 
@@ -35,6 +36,10 @@ public class RemoveDuplicatedImagesProcessor extends ImageProcessorBase
 	
 	@Inject 
 	private IdenticalFilesProcessorFactory identicalFileProcessorFactory;
+	
+	@Inject
+	@Named("FileIdentityComparator")
+	private Comparator<File> fileComparator;
 
 	public RemoveDuplicatedImagesProcessor(File sourceDir)
 	{
@@ -102,6 +107,6 @@ public class RemoveDuplicatedImagesProcessor extends ImageProcessorBase
 
 		identicalFileProcessorFactory.
 				create(isDryRun()).
-				processIdenticalObjects(files, new FileIdentityComparator());
+				processIdenticalObjects(files, fileComparator);
 	}
 }
