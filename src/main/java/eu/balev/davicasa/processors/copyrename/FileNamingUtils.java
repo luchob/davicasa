@@ -86,5 +86,16 @@ public class FileNamingUtils
 		return IMAGE_NAME_FORMAT.format(imageDate) + "_" + idx + "." + ext;
 	}
 
-
+	/**
+	 * Returns the image file (represented as file) based on the target directory and the image file name. 
+	 * 
+	 * @param imageTargetDir the target directory where the image is stored
+	 * @param imageFileName the image file name
+	 * 
+	 * @return a file representation of the image
+	 */
+	public File getImageFile(File imageTargetDir, String imageFileName)
+	{
+		return new File(imageTargetDir, imageFileName);
+	}
 }

@@ -29,7 +29,7 @@ public class CopyAndRenameImageProcessor extends ImageProcessorBase
 	
 	@Inject 
 	private FileRenameUtils fileRenameUtils;
-	
+
 	public CopyAndRenameImageProcessor(File sourceDir, File targetDir)
 	{
 		Objects.requireNonNull(sourceDir, "The source dir cannot be null!");

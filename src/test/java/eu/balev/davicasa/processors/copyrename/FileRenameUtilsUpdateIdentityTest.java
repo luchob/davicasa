@@ -48,11 +48,11 @@ public class FileRenameUtilsUpdateIdentityTest
 	{
 		fileRenameUtilsToTest = new FileRenameUtils();
 
-		fileRenameUtilsToTest.init(new File("."), true);
-
 		Injector injector = Guice.createInjector(new DavicasaTestModule());
 		injector.injectMembers(fileRenameUtilsToTest);
 
+		fileRenameUtilsToTest.init(new File("."), true);
+		
 		// initialize the names of the full directories
 		Mockito.when(fullDir1Mock.getName()).thenReturn("fullDir1Mock");
 		Mockito.when(fullDir2Mock.getName()).thenReturn("fullDir2Mock");

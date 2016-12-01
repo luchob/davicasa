@@ -5,10 +5,9 @@ import java.io.FileFilter;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Comparator;
-import java.util.Date;
 
-import org.junit.Assert;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -21,7 +20,6 @@ import com.google.inject.name.Names;
 
 import eu.balev.davicasa.inject.SLF4JTypeListener;
 import eu.balev.davicasa.processors.TestFileIdentityComparator;
-import eu.balev.davicasa.processors.copyrename.FileRenameUtils;
 import eu.balev.davicasa.util.ImageFileFilter;
 import eu.balev.davicasa.util.ImageHashCalculator;
 import eu.balev.davicasa.util.TestHashCalculator;
@@ -35,31 +33,16 @@ public class FileRenameUtilsTest
 	{
 		fileRenameUtilsToTest = new FileRenameUtils();
 		
-		fileRenameUtilsToTest.init(new File("."), true);
-		
 		Injector injector = Guice.createInjector(new DavicasaTestModule());
 		injector.injectMembers(fileRenameUtilsToTest);
+		
+		fileRenameUtilsToTest.init(new File("."), true);
 	}
 	
 	@After
 	public void tearDown()
 	{
 		fileRenameUtilsToTest = null;
-	}
-	
-	@Test
-	public void getAndUpdateFreeIndexTest() throws IOException
-	{
-		File dummyFile = new File("dummy.jpg");
-		Date now = new Date();
-		
-		fileRenameUtilsToTest.processImageFile(dummyFile, now);
-		
-		for (int expected = 2; expected < 10; expected++)
-		{
-			int idx = fileRenameUtilsToTest.getAndUpdateFreeIndex(now, "jpg");
-			Assert.assertEquals(expected, idx);
-		}	
 	}
 	
 	@Test

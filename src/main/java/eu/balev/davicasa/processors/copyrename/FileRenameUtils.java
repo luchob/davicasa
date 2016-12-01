@@ -46,18 +46,22 @@ public class FileRenameUtils
 	@Inject
 	@Named("FileIdentityComparator")
 	private Comparator<File> fileComparator;
-	
+
 	@Inject
 	private FileNamingUtils fileNamingUtils;
+	
+	@Inject
+	private FreeIndexCache indexCache;
+	
 
 	/**
 	 * Maintains a cache for free indices. The key in the map is the directory
 	 * where the image should go and the value is the next free index.
 	 */
-	private Map<File, Integer> indexCache = new HashMap<>();
+	//private Map<File, Integer> indexCache = new HashMap<>();
 
 	private Map<File, Map<String, List<File>>> targetFilesCache = new HashMap<>();
-	
+
 	public void setDryRun(boolean dryRun)
 	{
 		this.dryRun = dryRun;
@@ -79,14 +83,15 @@ public class FileRenameUtils
 			String ext = fileNamingUtils.getFileExtension(aFile);
 			if (ext == null)
 			{
-				logger.error("Unable to process file [{}] because it has no extension, e.g. .jpg .gif, etc...", 
+				logger.error(
+						"Unable to process file [{}] because it has no extension, e.g. .jpg .gif, etc...",
 						aFile.getAbsolutePath());
 				return null;
 			}
-			Integer index = getAndUpdateFreeIndex(imageDate, ext);
+			int index = indexCache.getAndUpdateFreeIndex(imageTargetDir, imageDate, ext);
 
-			File targetFile = new File(imageTargetDir, fileNamingUtils.getImageFileName(imageDate,
-					index, ext));
+			File targetFile = new File(imageTargetDir,
+					fileNamingUtils.getImageFileName(imageDate, index, ext));
 
 			if (!dryRun)
 			{
@@ -170,13 +175,7 @@ public class FileRenameUtils
 			{
 				String hash = hashCalculator.getHashSum(existingFile);
 
-				List<File> files = cache.get(hash);
-				if (files == null)
-				{
-					files = new LinkedList<>();
-					cache.put(hash, files);
-				}
-				files.add(existingFile);
+				cache.computeIfAbsent(hash, h-> new LinkedList<>()).add(existingFile);
 			}
 		}
 		return cache;
@@ -185,10 +184,11 @@ public class FileRenameUtils
 	private boolean checkImageDir(File imageDir)
 	{
 		boolean ret = true;
-		if (!imageDir.exists())
+		if (!dryRun)
 		{
-			if (!dryRun)
+			if (!imageDir.exists())
 			{
+
 				ret = imageDir.mkdirs();
 				if (!ret)
 				{
@@ -201,10 +201,7 @@ public class FileRenameUtils
 							imageDir.getAbsolutePath());
 				}
 			}
-		}
-		else
-		{
-			if (!dryRun)
+			else
 			{
 				if (!imageDir.isDirectory())
 				{
@@ -215,37 +212,7 @@ public class FileRenameUtils
 				}
 			}
 		}
-
 		return ret;
-	}
-	
-	public int getAndUpdateFreeIndex(Date imageDate, String ext)
-	{
-		File imageDir = fileNamingUtils.getImageDir(targetDir, imageDate);
-
-		Integer freeIdx = indexCache.get(imageDir);
-		if (freeIdx == null)
-		{
-			freeIdx = 1;
-		}
-
-		if (!dryRun)
-		{
-			while (true)
-			{
-				File targetFile = new File(imageDir, fileNamingUtils.getImageFileName(
-						imageDate, freeIdx, ext));
-				if (!targetFile.exists())
-				{
-					break;
-				}
-				freeIdx++;
-			}
-		}
-
-		indexCache.put(imageDir, freeIdx + 1);
-
-		return freeIdx;
 	}
 
 	public void init(File targetDir, boolean dryRun)
@@ -255,7 +222,7 @@ public class FileRenameUtils
 		this.targetDir = targetDir;
 		this.setDryRun(dryRun);
 
-		indexCache.clear();
+		indexCache.clearCache();
 		targetFilesCache.clear();
 	}
 }
