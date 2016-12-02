@@ -1,32 +1,25 @@
 package eu.balev.davicasa.processors.copyrename;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.Comparator;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import org.slf4j.Logger;
 
 import eu.balev.davicasa.inject.InjectLogger;
-import eu.balev.davicasa.util.ImageHashCalculator;
 
 public class FileRenameUtils
 {
 	/*
 	 * Currently the target directory structure is:
 	 * 
-	 * YYYY |----MM |----DD
+	 * YYYY 
+	 * 	|----MM 
+	 * 		  |----DD
 	 */
 
 	@InjectLogger
@@ -37,30 +30,13 @@ public class FileRenameUtils
 	private boolean dryRun;
 
 	@Inject
-	private ImageHashCalculator hashCalculator;
-
-	@Inject
-	@Named("ImageFileFilter")
-	private FileFilter imageFilter;
-
-	@Inject
-	@Named("FileIdentityComparator")
-	private Comparator<File> fileComparator;
-
-	@Inject
 	private FileNamingUtils fileNamingUtils;
 	
 	@Inject
 	private FreeIndexCache indexCache;
 	
-
-	/**
-	 * Maintains a cache for free indices. The key in the map is the directory
-	 * where the image should go and the value is the next free index.
-	 */
-	//private Map<File, Integer> indexCache = new HashMap<>();
-
-	private Map<File, Map<String, List<File>>> targetFilesCache = new HashMap<>();
+	@Inject
+	private TargetFileCache targetFileCache;
 
 	public void setDryRun(boolean dryRun)
 	{
@@ -71,12 +47,12 @@ public class FileRenameUtils
 	{
 		File imageTargetDir = fileNamingUtils.getImageDir(targetDir, imageDate);
 
-		if (!checkImageDir(imageTargetDir))
+		if (!getOrCreateImageDir(imageTargetDir))
 		{
 			return null;
 		}
 
-		File duplicate = checkAndUpdateIdentity(imageTargetDir, aFile);
+		File duplicate = targetFileCache.getAndUpdateCache(imageTargetDir, aFile);
 
 		if (duplicate == null)
 		{
@@ -113,75 +89,7 @@ public class FileRenameUtils
 		}
 	}
 
-	public File checkAndUpdateIdentity(File targetDir, File targetFile)
-			throws IOException
-	{
-		Map<String, List<File>> cache = targetFilesCache.get(targetDir);
-		if (cache == null)
-		{
-			// no cache for this directory.
-			// initialize the cache.
-			cache = createFileCache(targetDir);
-			targetFilesCache.put(targetDir, cache);
-		}
-
-		String hash = hashCalculator.getHashSum(targetFile);
-
-		if (cache.containsKey(hash))
-		{
-			// the cache has such hash sum, meaning that the
-			// target dir most likely contains a duplicate
-			List<File> existingFiles = cache.get(hash);
-			if (existingFiles.isEmpty())
-			{
-				existingFiles.add(targetFile);
-			}
-			else
-			{
-
-				Iterator<File> existingFilesIter = existingFiles.iterator();
-				while (existingFilesIter.hasNext())
-				{
-					File existingFile = existingFilesIter.next();
-
-					if (fileComparator.compare(targetFile, existingFile) == 0)
-					{
-						return existingFile;
-					}
-				}
-
-				existingFiles.add(targetFile);
-			}
-		}
-		else
-		{
-			List<File> filesForHash = new LinkedList<>();
-			filesForHash.add(targetFile);
-			cache.put(hash, filesForHash);
-		}
-
-		return null;
-	}
-
-	private Map<String, List<File>> createFileCache(File targetDir)
-			throws IOException
-	{
-		// initialize the cache with all files available
-		Map<String, List<File>> cache = new HashMap<>();
-		File[] existingFiles = targetDir.listFiles(imageFilter);
-		if (existingFiles != null)
-		{
-			for (File existingFile : existingFiles)
-			{
-				String hash = hashCalculator.getHashSum(existingFile);
-
-				cache.computeIfAbsent(hash, h-> new LinkedList<>()).add(existingFile);
-			}
-		}
-		return cache;
-	}
-
-	private boolean checkImageDir(File imageDir)
+	private boolean getOrCreateImageDir(File imageDir)
 	{
 		boolean ret = true;
 		if (!dryRun)
@@ -223,6 +131,6 @@ public class FileRenameUtils
 		this.setDryRun(dryRun);
 
 		indexCache.clearCache();
-		targetFilesCache.clear();
+		targetFileCache.clearCache();
 	}
 }

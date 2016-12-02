@@ -30,9 +30,9 @@ import eu.balev.davicasa.util.TestHashCalculator;
  * {@link FileRenameUtils#checkAndUpdateIdentity(File, File)} method.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class FileRenameUtilsUpdateIdentityTest
+public class TargetFileCacheTest
 {
-	private FileRenameUtils fileRenameUtilsToTest;
+	private TargetFileCache cacheToTest;
 
 	@Mock
 	File emptyDirMock, fullDir1Mock, fullDir2Mock;
@@ -46,13 +46,11 @@ public class FileRenameUtilsUpdateIdentityTest
 	@Before
 	public void setUp()
 	{
-		fileRenameUtilsToTest = new FileRenameUtils();
+		cacheToTest = new TargetFileCache();
 
 		Injector injector = Guice.createInjector(new DavicasaTestModule());
-		injector.injectMembers(fileRenameUtilsToTest);
+		injector.injectMembers(cacheToTest);
 
-		fileRenameUtilsToTest.init(new File("."), true);
-		
 		// initialize the names of the full directories
 		Mockito.when(fullDir1Mock.getName()).thenReturn("fullDir1Mock");
 		Mockito.when(fullDir2Mock.getName()).thenReturn("fullDir2Mock");
@@ -94,7 +92,7 @@ public class FileRenameUtilsUpdateIdentityTest
 	@Test
 	public void testCheckAndUpdateIdentityEmptyDir() throws IOException
 	{
-		File res = fileRenameUtilsToTest.checkAndUpdateIdentity(emptyDirMock,
+		File res = cacheToTest.getAndUpdateCache(emptyDirMock,
 				dir1Img1MockFile);
 
 		Assert.assertNull("The result should be null, we expect no duplicates.",
@@ -107,7 +105,7 @@ public class FileRenameUtilsUpdateIdentityTest
 	{
 		File aRandomImageMock = Mockito.mock(File.class);
 
-		File res = fileRenameUtilsToTest.checkAndUpdateIdentity(fullDir1Mock,
+		File res = cacheToTest.getAndUpdateCache(fullDir1Mock,
 				aRandomImageMock);
 
 		Assert.assertNull("The result should be null, we expect no duplicates.",
@@ -117,7 +115,7 @@ public class FileRenameUtilsUpdateIdentityTest
 	@Test
 	public void testCheckAndUpdateIdentityFullDirCollision() throws IOException
 	{
-		File res = fileRenameUtilsToTest.checkAndUpdateIdentity(fullDir1Mock,
+		File res = cacheToTest.getAndUpdateCache(fullDir1Mock,
 				dir1Img1MockFile);
 
 		Assert.assertNotNull("A duplicate should have been found.", res);
@@ -129,9 +127,9 @@ public class FileRenameUtilsUpdateIdentityTest
 	public void testCheckAndUpdateIdentityTwoFullDirsCollision()
 			throws IOException
 	{
-		File res1 = fileRenameUtilsToTest.checkAndUpdateIdentity(fullDir1Mock,
+		File res1 = cacheToTest.getAndUpdateCache(fullDir1Mock,
 				dir1Img1MockFile);
-		File res2 = fileRenameUtilsToTest.checkAndUpdateIdentity(fullDir2Mock,
+		File res2 = cacheToTest.getAndUpdateCache(fullDir2Mock,
 				dir2Img1MockFile);
 
 		Assert.assertNotNull("A duplicate should have been found.", res1);
