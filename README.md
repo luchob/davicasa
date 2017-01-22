@@ -1,3 +1,5 @@
+![build status](https://api.travis-ci.org/luchob/davicasa.svg?branch=master)
+
 # davicasa
 
 Davicasa is a small utility that we use to sort and maintain the photos of our kids. The tool has two modes of operation:
