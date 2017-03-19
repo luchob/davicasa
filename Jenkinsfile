@@ -22,6 +22,7 @@ pipeline {
             }
             steps {
                 bat 'gradlew distZip'
+                archiveArtifacts artifacts: 'build/distributions/*.zip'
             }
         }
     }
