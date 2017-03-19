@@ -4,7 +4,10 @@ pipeline {
     agent any
 
     stages {
-        stage('Build') {
+        stage('Building on Windows...') {
+			agent { 
+                label 'windows'
+            }
             steps {
 				bat 'gradlew build'
 	        }
