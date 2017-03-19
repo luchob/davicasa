@@ -4,19 +4,24 @@ pipeline {
     agent any
 
     stages {
-        stage('Building on Windows...') {
+        stage('Building...') {
             steps {
 				bat 'gradlew build'
 	        }
         }
-        stage('Test') {
+        stage('Executing test cases...') {
             steps {
-                echo 'Testing..'
+                bat 'gradlew test'
             }
         }
-        stage('Deploy') {
+        stage('Deploying...') {
+			when {
+              expression {
+                currentBuild.result == null || currentBuild.result == 'SUCCESS' 
+              }
+            }
             steps {
-                echo 'Deploying....'
+                bat 'gradlew distZip'
             }
         }
     }
