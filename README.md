@@ -10,7 +10,7 @@ Davicasa is a small utility that we use to sort and maintain the photos of our k
 
 The tool supports a "dry-run" option - it will try to output all the operations that would be normally performed without changing anything in the FS. 
 
-#Running
+# Running
 
 There is no binary distribution. However the tool can be easily built with gradle (gradle wrapper is included in the source distribution so there is nothing to install additionally).
 
@@ -29,7 +29,7 @@ From this folder run:
 
 This will print a detailed usage message.
 
-#Exploring
+# Exploring
 
 The tool can be easily imported and explored in Eclipse. In the source directory run:
 
