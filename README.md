@@ -1,5 +1,6 @@
 ![build status](https://api.travis-ci.org/luchob/davicasa.svg?branch=master)
 [![Language](http://img.shields.io/badge/language-java-brightgreen.svg)](https://www.java.com/)
+[![Code Coverage](https://img.shields.io/codecov/c/github/luchob/davicasa/master.svg)](https://codecov.io/github/luchob/davicasa?branch=master)
 
 # davicasa
 
