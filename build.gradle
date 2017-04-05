@@ -10,16 +10,12 @@ run {
 	}
 }
 
-// In this section you declare where to find the dependencies of your project
 repositories {
-    // Use 'jcenter' for resolving your dependencies.
-    // You can declare any Maven/Ivy/file repository here.
     jcenter()
 }
 
-// In this section you declare the dependencies for your production and test code
 dependencies {
-    // The production code uses the SLF4J logging API at compile time
+	//slf4j+logback
     compile 'org.slf4j:slf4j-api:1.7.9'
     compile 'ch.qos.logback:logback-classic:1.1.2'
 	
@@ -29,11 +25,12 @@ dependencies {
 	compile 'commons-codec:commons-codec:1.10'
 	compile 'com.drewnoakes:metadata-extractor:2.7.0'
 	
+	//test cases
 	testCompile 'junit:junit:4.12'
 	testCompile 'org.mockito:mockito-all:1.10.19'
-	
 }
 
+//xml reports, e.g. for codecov
 jacocoTestReport {
     reports {
         xml.enabled true
