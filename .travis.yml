@@ -13,4 +13,4 @@ cache:
     - $HOME/.gradle/wrapper/
 
 after_success:
-  - codecov
+  - bash <(curl -s https://codecov.io/bash)
