@@ -19,10 +19,10 @@ Download or clone the sources. From the main project directory run:
 
 <pre>gradlew installApp</pre>
 
-If this is successful (assuming standard directory structure) in the newly created folder <pre>./build/install/davicasa/bin</pre> there should be a shell script that is able to run the application. 
-Take these files and put them in a directory of your choice.
+If this is successful (assuming standard directory structure) in the newly created folder <pre>build/install/davicasa/bin</pre> there should be a shell script that is able to run the application. 
+Take all these files (in the <pre>davicasa</pre> folder) and put them in a directory of your choice.
 
-From this folder run:
+From the <pre>bin</pre> subfolder run:
 
 - for example, under Windows:
 
